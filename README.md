@@ -184,4 +184,4 @@ Before requesting review:
 
 1. Clone repo and open in Android Studio.
 2. Connect FTC SDK/Android environment.
-3. Ask Jacob for futher instructions.
+3. Ask Jacob for further instructions.
