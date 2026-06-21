@@ -3,7 +3,7 @@ Code repository for the Silly Servos Robotics Team #24213 at Highland Park High 
 <br>
 2026-2027 FTC BIOBUZZ
 <br>
-<img src="https://jacobkaiserman.com/sillyServos-2023-2024/images/hpRobotics.png" width="30%" style="display:inline;">
+<img src="https://jacobkaiserman.com/sillyServos-2023-2024/images/hpRobotics.png" alt="Highland Park Robotics logo" width="30%">
 <br>
 <h2>Using GitHub</h2>
 <h3>What is GitHub?</h3>
