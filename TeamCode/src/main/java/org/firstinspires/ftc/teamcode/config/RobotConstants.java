@@ -14,4 +14,6 @@ public final class RobotConstants {
 
     public static final double AUTO_FORWARD_POWER = 0.35;
     public static final double AUTO_FORWARD_SECONDS = 1.5;
+    public static final double START_POS_X = 0;
+    public static final double START_POS_Y = 0;
 }
