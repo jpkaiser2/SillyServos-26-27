@@ -36,10 +36,7 @@ public final class RobotConstants {
     public static final DcMotorSimple.Direction LEFT_DRIVE_DIRECTION = DcMotorSimple.Direction.REVERSE;
     public static final DcMotorSimple.Direction RIGHT_DRIVE_DIRECTION = DcMotorSimple.Direction.FORWARD;
 
-    // Starting pose must use the same field frame as the targets in ShooterConfig.
-    public static final double START_X_INCHES = 0.0;
-    public static final double START_Y_INCHES = 0.0;
-    public static final double START_HEADING_RADIANS = 0.0;
+    // Starting poses and fixed alliance hive positions are configured in FieldConfig.
     public static final double AIM_KP = 1.0; // Turn power per radian; tune on the robot.
     public static final double MAX_AIM_POWER = 0.35;
     public static final double AIM_TOLERANCE_RADIANS = Math.toRadians(2);

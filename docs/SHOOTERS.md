@@ -4,8 +4,14 @@ Select **Shooter TeleOp** on the Driver Station. It uses the same Pedro stick co
 TemplateTeleOp. `Turret` owns one flywheel and one hood; the TeleOp creates a separate
 instance for each ball type. As in SillyServosShooterMath.pdf, the chassis aims horizontally.
 
+Before Play, press **gamepad 1 D-pad left/right** to cycle through **Red Right, Red Left,
+Blue Right, Blue Left**. Place the robot at the selected position and heading. The selection
+is locked when Play is pressed; selecting a pollen/nectar shooter during the match keeps the
+same alliance.
+
 | Control | Action |
 | --- | --- |
+| Gamepad 1 D-pad left/right, before Play | Select one of the four starting positions |
 | Gamepad 1 left stick | Drive / strafe |
 | Gamepad 1 right stick X | Turn |
 | Hold gamepad 1 left bumper | Stop translation and turn toward the selected shooter's target |
@@ -31,6 +37,39 @@ does not feed from RT; LB still runs ordinary intake. The PDF assumes a stationa
 this implementation does not compensate for robot motion.
 The hood stays at its last position when the flywheel stops. Telemetry shows calculated angle,
 distance, heading error, and both commanded and encoder-measured wheel RPM.
+
+## Field coordinates and starting positions
+
+Enter the measurements in `config/FieldConfig.java`. They are currently `UNMEASURED`;
+the TeleOp shows which values are missing and refuses to start until the selected start
+and its alliance's two aim points are filled in. The other alliance can be measured later.
+
+Use this **same fixed coordinate frame for every start and hive**:
+
+- Origin `(0, 0)` is the center of the field.
+- `+X` points from the center toward the blue alliance wall.
+- `+Y` points left when looking along `+X` (90 degrees counterclockwise).
+- X/Y coordinates and hive heights are **meters**. Heights are above the floor.
+- Start headings are entered in **degrees**: 0 faces +X, 90 faces +Y, 180 faces -X,
+  and 270 (or -90) faces -Y. Positive rotation is counterclockwise.
+
+`StartPosition` contains independent `(x, y, heading)` measurements for all four starts,
+measured at the **odometry reference point**, with left/right named from that alliance's
+view into the field. `Alliance.RED` and `Alliance.BLUE` contain fixed pollen and nectar hive
+aim points as `(x, y, height)`. If pollen and nectar aim at the same location, enter the same
+coordinates for both. Measure the intended scoring point, not just the hive's outside edge.
+
+At Play, the selected pose is converted from meters/degrees to Pedro's inches/radians and
+used to initialize odometry once. During the match, odometry tracks the robot in this field
+frame and each shooter recalculates its distance and aim from that pose to its alliance's
+fixed hive. Changing starts never moves, mirrors, or offsets the hive coordinates. Both red
+starts use the same red targets, and both blue starts use the same blue targets.
+
+Telemetry shows the selected start/alliance, fixed hive coordinates, robot-to-hive horizontal
+distance, and the launch-point distance used by a valid shot. Launch-point distance includes
+the individual shooter's mounting offsets. Position accuracy depends on measured starts,
+headings, and correctly calibrated odometry. This TeleOp expects the robot at the selected
+start when Play is pressed; it does not inherit a pose after driving an autonomous routine.
 
 ## Robot configuration
 
@@ -64,12 +103,12 @@ the right is always the opposite. Tune `INTAKE_POWER`, `POLLEN_TRANSFER_POWER`, 
 **The supplied numbers are examples, not measured robot or field dimensions.**
 
 Edit `config/ShooterConfig.java`. `POLLEN` and `NECTAR` are independent configurations.
-Their default geometry reproduces the PDF's example. Assign measured values separately in
+The robot geometry still uses example values. Assign measured values separately in
 the static block, for example `POLLEN.wheelDiameter = ...;` and `NECTAR.rpmCorrection = ...;`.
 
-- `targetX`, `targetY`, `targetHeight`, `launchHeight`, `wheelDiameter`, `forwardOffset`, and
-  `leftOffset` are **meters**. Offsets are measured from the odometry reference point to the
-  ball's launch point, forward and left positive. Targets share the odometry field frame.
+- `launchHeight`, `wheelDiameter`, `forwardOffset`, and `leftOffset` are **meters**.
+  Offsets are measured from the odometry reference point to the ball's launch point, forward
+  and left positive. Hive positions and heights are configured separately in `FieldConfig`.
 - `headingOffset` is the fixed horizontal mounting angle in radians, counterclockwise positive.
 - `minAngle` / `maxAngle` are measured ball launch angles in radians; `servoAtMinAngle` /
   `servoAtMaxAngle` are the corresponding servo positions (0–1). The two-point mapping assumes
@@ -86,8 +125,8 @@ the static block, for example `POLLEN.wheelDiameter = ...;` and `NECTAR.rpmCorre
   Do not treat the PDF's illustrative `k = 1.25` as measured calibration.
 
 In `config/RobotConstants.java`, measure the Pinpoint pod offsets in **inches**, select the
-installed pod type, verify encoder and drive directions, and enter the initial field pose
-(inches, inches, radians). Place the robot at that pose before Init. Tune `AIM_KP`,
+installed pod type, and verify encoder and drive directions. Configure starting poses in
+`FieldConfig` as described above. Tune `AIM_KP`,
 `MAX_AIM_POWER`, and the heading tolerance on the robot. Pedro defaults still need robot-specific
 drivetrain/path-following tuning before using autonomous paths.
 

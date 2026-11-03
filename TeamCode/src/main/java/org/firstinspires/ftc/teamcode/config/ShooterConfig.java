@@ -21,9 +21,7 @@ public final class ShooterConfig {
     public final String flywheelName;
     public final String hoodName;
     public DcMotorSimple.Direction motorDirection = DcMotorSimple.Direction.FORWARD;
-    public double targetX = 2.0;
-    public double targetY = 0.0;
-    public double targetHeight = 1.0;
+    // Fixed hive coordinates belong in FieldConfig; this class describes the hardware.
     public double launchHeight = 0.5;
     public double forwardOffset = 0.0;
     public double leftOffset = 0.0;

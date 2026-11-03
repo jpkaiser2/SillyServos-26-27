@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
+import org.firstinspires.ftc.teamcode.config.FieldConfig;
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 import org.firstinspires.ftc.teamcode.pedroPathing.PedroMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTransfer;
@@ -20,16 +21,44 @@ public class ShooterTeleOp extends OpMode {
     private Turret nectar;
     private IntakeTransfer intakeTransfer;
     private boolean selectPollen = true;
+    private final FieldConfig.StartPosition[] starts = FieldConfig.StartPosition.values();
+    private int startIndex = 0;
+    private boolean previousLeft;
+    private boolean previousRight;
+    private boolean fieldReady;
 
     @Override
     public void init() {
         drive = new PedroMecanumDrive(hardwareMap);
-        drive.setStartingPose(new Pose(RobotConstants.START_X_INCHES,
-                RobotConstants.START_Y_INCHES, RobotConstants.START_HEADING_RADIANS));
         pollen = new Turret(hardwareMap, ShooterConfig.POLLEN);
         nectar = new Turret(hardwareMap, ShooterConfig.NECTAR);
         intakeTransfer = new IntakeTransfer(hardwareMap);
-        telemetry.addLine("Set measured ShooterConfig / RobotConstants before shooting.");
+        showStartSelection();
+    }
+
+    @Override
+    public void init_loop() {
+        // Only change starts before Play, once per D-pad press.
+        if (gamepad1.dpad_right && !previousRight) startIndex = (startIndex + 1) % starts.length;
+        if (gamepad1.dpad_left && !previousLeft) startIndex = (startIndex + starts.length - 1) % starts.length;
+        previousRight = gamepad1.dpad_right;
+        previousLeft = gamepad1.dpad_left;
+        showStartSelection();
+    }
+
+    private void showStartSelection() {
+        FieldConfig.StartPosition start = starts[startIndex];
+        telemetry.addLine("G1 D-pad left/right: select starting position before Play");
+        telemetry.addData("Starting position", start.label);
+        telemetry.addData("Target alliance", start.alliance);
+        telemetry.addData("Start measured", start.isMeasured());
+        telemetry.addData("Pollen hive measured", start.alliance.pollenHive.isMeasured());
+        telemetry.addData("Nectar hive measured", start.alliance.nectarHive.isMeasured());
+        if (start.isMeasured()) {
+            telemetry.addData("Starting pose (m, m, deg)", "%.2f, %.2f, %.1f",
+                    start.xMeters, start.yMeters, start.headingDegrees);
+        }
+        telemetry.addLine("Enter missing measurements in FieldConfig. Place robot at selected start.");
         telemetry.addLine("G2 A: pollen | B: nectar | RB: spin up | RT: shoot");
         telemetry.addLine("G2 hold LB: intake | hold X: reverse intake/transfer");
         telemetry.addLine("G1 sticks: drive | hold LB: stop translation and aim chassis");
@@ -38,11 +67,23 @@ public class ShooterTeleOp extends OpMode {
 
     @Override
     public void start() {
+        FieldConfig.StartPosition start = starts[startIndex];
+        fieldReady = start.isMeasured() && start.alliance.pollenHive.isMeasured()
+                && start.alliance.nectarHive.isMeasured();
+        if (!fieldReady) {
+            telemetry.addLine("Cannot start: selected pose or alliance hive measurements are missing in FieldConfig.");
+            telemetry.update();
+            requestOpModeStop();
+            return;
+        }
+        // Seed field-relative odometry once. Never reset it as the robot drives.
+        drive.setStartingPose(start.toPedroPose());
         drive.startTeleOpDrive();
     }
 
     @Override
     public void loop() {
+        if (!fieldReady) return;
         if (gamepad2.a) selectPollen = true;
         if (gamepad2.b) selectPollen = false;
         // Apply drive commands and refresh odometry once per loop before solving.
@@ -51,8 +92,10 @@ public class ShooterTeleOp extends OpMode {
         boolean reverse = gamepad2.x;
         boolean shoot = gamepad2.right_trigger > 0.1 && !reverse;
         boolean spin = (gamepad2.right_bumper || shoot) && !reverse;
-        pollen.update(pose, selectPollen && spin);
-        nectar.update(pose, !selectPollen && spin);
+        FieldConfig.Alliance alliance = starts[startIndex].alliance;
+        pollen.update(pose, alliance.pollenHive, selectPollen && spin);
+        nectar.update(pose, alliance.nectarHive, !selectPollen && spin);
+        FieldConfig.Target hive = selectPollen ? alliance.pollenHive : alliance.nectarHive;
         ShooterMath.Shot shot = (selectPollen ? pollen : nectar).getShot();
         // Intake and shooting run BOTH feed paths. Reverse takes priority.
         // A rejected shot cannot feed by itself; LB still allows ordinary intake.
@@ -77,6 +120,12 @@ public class ShooterTeleOp extends OpMode {
         drive.setDrivePowers(forward, strafe, turn, RobotConstants.FIELD_CENTRIC_TELEOP);
 
         telemetry.addData("Selected", selectPollen ? "Pollen" : "Nectar");
+        telemetry.addData("Starting position / alliance", "%s / %s", starts[startIndex].label, alliance);
+        telemetry.addData("Hive (m, m, height m)", "%.2f, %.2f, %.2f",
+                hive.xMeters, hive.yMeters, hive.heightMeters);
+        telemetry.addData("Robot-to-hive distance (m)", "%.2f", Math.hypot(
+                hive.xMeters - pose.getX() * FieldConfig.METERS_PER_INCH,
+                hive.yMeters - pose.getY() * FieldConfig.METERS_PER_INCH));
         telemetry.addData("Intake / transfer", reverse ? "Reverse" : feed ? "Forward" : "Stopped");
         telemetry.addData("Pose (in, in, deg)", "%.1f, %.1f, %.1f",
                 pose.getX(), pose.getY(), Math.toDegrees(pose.getHeading()));
@@ -87,7 +136,7 @@ public class ShooterTeleOp extends OpMode {
         if (shot == null) {
             telemetry.addLine("No valid shot: check geometry, hood limits and RPM limit.");
         } else {
-            telemetry.addData("Distance (m)", "%.2f", shot.distance);
+            telemetry.addData("Launch-to-hive distance (m)", "%.2f", shot.distance);
             telemetry.addData("Launch angle (deg)", "%.1f", Math.toDegrees(shot.angle));
             telemetry.addData("Aim error (deg)", "%.1f", Math.toDegrees(shot.headingError));
         }

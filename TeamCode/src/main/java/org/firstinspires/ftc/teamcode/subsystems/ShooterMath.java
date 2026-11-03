@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
+import org.firstinspires.ftc.teamcode.config.FieldConfig;
 
 /** Equations from SillyServosShooterMath. All inputs use SI units. */
 public final class ShooterMath {
@@ -26,18 +27,19 @@ public final class ShooterMath {
     }
 
     /** Returns null for an invalid or unreachable shot, including an excessive RPM. */
-    public static Shot solve(double robotX, double robotY, double heading, ShooterConfig c) {
-        if (!validConfig(c)) return null;
+    public static Shot solve(double robotX, double robotY, double heading, ShooterConfig c,
+                             FieldConfig.Target target) {
+        if (!validConfig(c) || !target.isMeasured()) return null;
 
         // Equations 27-28: rotate each launch point's forward/left offsets into the field.
         double launchX = robotX + c.forwardOffset * Math.cos(heading)
                 - c.leftOffset * Math.sin(heading);
         double launchY = robotY + c.forwardOffset * Math.sin(heading)
                 + c.leftOffset * Math.cos(heading);
-        double dx = c.targetX - launchX;
-        double dy = c.targetY - launchY;
+        double dx = target.xMeters - launchX;
+        double dy = target.yMeters - launchY;
         double distance = Math.hypot(dx, dy);
-        double height = c.targetHeight - c.launchHeight;
+        double height = target.heightMeters - c.launchHeight;
         if (!Double.isFinite(distance) || distance < 1e-6 || !Double.isFinite(height)) {
             return null;
         }

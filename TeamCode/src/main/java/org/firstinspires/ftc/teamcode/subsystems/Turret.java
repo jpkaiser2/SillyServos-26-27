@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
+import org.firstinspires.ftc.teamcode.config.FieldConfig;
 
 /** One flywheel and adjustable hood. Horizontal aiming is done by the chassis. */
 public final class Turret {
@@ -27,10 +28,10 @@ public final class Turret {
     }
 
     /** Call every loop, even when stopped, so aim follows the current odometry pose. */
-    public void update(Pose pose, boolean spin) {
+    public void update(Pose pose, FieldConfig.Target target, boolean spin) {
         // Pedro uses inches; the PDF uses meters. Heading is already in radians.
-        shot = ShooterMath.solve(pose.getX() * 0.0254, pose.getY() * 0.0254,
-                pose.getHeading(), config);
+        shot = ShooterMath.solve(pose.getX() * FieldConfig.METERS_PER_INCH,
+                pose.getY() * FieldConfig.METERS_PER_INCH, pose.getHeading(), config, target);
         if (!spin || shot == null) {
             stop();
             return;
