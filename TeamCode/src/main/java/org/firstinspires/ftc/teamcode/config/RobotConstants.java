@@ -14,6 +14,16 @@ public final class RobotConstants {
 
     public static final boolean FIELD_CENTRIC_TELEOP = true;
 
+    // Verify directions so positive power moves balls toward the shooters.
+    public static final DcMotorSimple.Direction INTAKE_DIRECTION = DcMotorSimple.Direction.FORWARD;
+    public static final DcMotorSimple.Direction POLLEN_TRANSFER_DIRECTION = DcMotorSimple.Direction.FORWARD;
+    // Right transfer servo always uses the opposite direction to the left.
+    public static final DcMotorSimple.Direction TRANSFER_LEFT_SERVO_DIRECTION = DcMotorSimple.Direction.FORWARD;
+    // Power magnitudes (0 to 1); tune for reliable ball feeding.
+    public static final double INTAKE_POWER = 1.0;
+    public static final double POLLEN_TRANSFER_POWER = 1.0;
+    public static final double TRANSFER_SERVO_POWER = 1.0;
+
     // TODO: Measure pod offsets (inches) and verify pod type/directions on the robot.
     public static final double FORWARD_POD_Y_INCHES = 0.0;
     public static final double STRAFE_POD_X_INCHES = 0.0;

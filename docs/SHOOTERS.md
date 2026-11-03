@@ -12,12 +12,23 @@ instance for each ball type. As in SillyServosShooterMath.pdf, the chassis aims 
 | Gamepad 2 A | Select pollen |
 | Gamepad 2 B | Select nectar |
 | Hold gamepad 2 right bumper | Set selected hood angle and spin selected flywheel |
-| Release gamepad 2 right bumper | Stop flywheel |
+| Hold gamepad 2 left bumper | Run intake and pollen transfer together |
+| Hold gamepad 2 right trigger | Spin selected flywheel and run both intake and transfer to feed |
+| Hold gamepad 2 X | Reverse intake, transfer, and transfer servos; stop flywheels |
+| Release gamepad 2 bumpers, trigger, and X | Stop flywheel, intake, transfer, and transfer servos |
 
-Selecting the other shooter stops the previous one. Stop stops both flywheels and the drive.
-There is no feeder/intake control in this TeleOp. Wait for the chassis and hood to settle and
-the measured RPM to reach the command before feeding a ball. The PDF assumes a stationary
-launch; this implementation does not compensate for robot motion or automatically feed balls.
+Selecting the other shooter stops the previous one. Stop stops both flywheels, both feed
+motors, both transfer servos, and the drive. `IntakeTransfer` owns the two feed motors and
+the two continuous-rotation servos. The intake feeds nectar; the separate transfer feeds
+pollen. Both motors run during intake and shooting regardless of which shooter is selected.
+The pollen transfer servos run in opposite directions whenever its motor is commanded to run,
+and both reverse with the motor. X takes priority over intake and shooting.
+
+Hold RB to spin up, wait for the chassis and hood to settle and measured RPM to reach the
+command, then hold RT to feed. RT also spins up the selected flywheel if RB is released.
+There is no automatic spin-up delay: RT feeds immediately for a valid shot. An invalid shot
+does not feed from RT; LB still runs ordinary intake. The PDF assumes a stationary launch;
+this implementation does not compensate for robot motion.
 The hood stays at its last position when the flywheel stops. Telemetry shows calculated angle,
 distance, heading error, and both commanded and encoder-measured wheel RPM.
 
@@ -32,11 +43,21 @@ types so encoder velocity control has appropriate SDK motor parameters:
 | Nectar flywheel | Encoder-equipped motor | `flywheelNectar` |
 | Pollen hood | Positional servo | `hoodPollen` |
 | Nectar hood | Positional servo | `hoodNectar` |
+| Intake / nectar feeder | Motor | `intakeMain` |
+| Pollen transfer | Motor | `intakeSmall` |
+| Pollen transfer left | Continuous-rotation servo | `pollenTransferLeft` |
+| Pollen transfer right | Continuous-rotation servo | `pollenTransferRight` |
 | Drive | Four motors | `leftFront`, `rightFront`, `leftBack`, `rightBack` |
 | Odometry | goBILDA Pinpoint | `pinpoint` |
 
 Names live in `config/HardwareNames.java`. Servo ports must be assigned on the Robot Controller;
 source code names do not create a controller hardware configuration.
+
+Set both transfer servos to continuous-rotation mode/type (not positional hood servos).
+In `RobotConstants.java`, adjust `INTAKE_DIRECTION` and `POLLEN_TRANSFER_DIRECTION` so positive
+power feeds toward the shooters. `TRANSFER_LEFT_SERVO_DIRECTION` sets the left servo direction;
+the right is always the opposite. Tune `INTAKE_POWER`, `POLLEN_TRANSFER_POWER`, and
+`TRANSFER_SERVO_POWER` as magnitudes from 0 to 1 for the mechanism.
 
 ## Measurements and tuning
 

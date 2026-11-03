@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 import org.firstinspires.ftc.teamcode.pedroPathing.PedroMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterMath;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
@@ -17,6 +18,7 @@ public class ShooterTeleOp extends OpMode {
     private PedroMecanumDrive drive;
     private Turret pollen;
     private Turret nectar;
+    private IntakeTransfer intakeTransfer;
     private boolean selectPollen = true;
 
     @Override
@@ -26,8 +28,10 @@ public class ShooterTeleOp extends OpMode {
                 RobotConstants.START_Y_INCHES, RobotConstants.START_HEADING_RADIANS));
         pollen = new Turret(hardwareMap, ShooterConfig.POLLEN);
         nectar = new Turret(hardwareMap, ShooterConfig.NECTAR);
+        intakeTransfer = new IntakeTransfer(hardwareMap);
         telemetry.addLine("Set measured ShooterConfig / RobotConstants before shooting.");
-        telemetry.addLine("G2 A: pollen | B: nectar | hold RB: spin selected shooter + set hood");
+        telemetry.addLine("G2 A: pollen | B: nectar | RB: spin up | RT: shoot");
+        telemetry.addLine("G2 hold LB: intake | hold X: reverse intake/transfer");
         telemetry.addLine("G1 sticks: drive | hold LB: stop translation and aim chassis");
         telemetry.update();
     }
@@ -44,9 +48,16 @@ public class ShooterTeleOp extends OpMode {
         // Apply drive commands and refresh odometry once per loop before solving.
         drive.update();
         Pose pose = drive.getPose();
-        pollen.update(pose, selectPollen && gamepad2.right_bumper);
-        nectar.update(pose, !selectPollen && gamepad2.right_bumper);
+        boolean reverse = gamepad2.x;
+        boolean shoot = gamepad2.right_trigger > 0.1 && !reverse;
+        boolean spin = (gamepad2.right_bumper || shoot) && !reverse;
+        pollen.update(pose, selectPollen && spin);
+        nectar.update(pose, !selectPollen && spin);
         ShooterMath.Shot shot = (selectPollen ? pollen : nectar).getShot();
+        // Intake and shooting run BOTH feed paths. Reverse takes priority.
+        // A rejected shot cannot feed by itself; LB still allows ordinary intake.
+        boolean feed = gamepad2.left_bumper || (shoot && shot != null);
+        intakeTransfer.setPower(reverse ? -1 : feed ? 1 : 0);
 
         double forward = Range.clip(-gamepad1.left_stick_y,
                 -RobotConstants.MAX_DRIVE_POWER, RobotConstants.MAX_DRIVE_POWER);
@@ -66,6 +77,7 @@ public class ShooterTeleOp extends OpMode {
         drive.setDrivePowers(forward, strafe, turn, RobotConstants.FIELD_CENTRIC_TELEOP);
 
         telemetry.addData("Selected", selectPollen ? "Pollen" : "Nectar");
+        telemetry.addData("Intake / transfer", reverse ? "Reverse" : feed ? "Forward" : "Stopped");
         telemetry.addData("Pose (in, in, deg)", "%.1f, %.1f, %.1f",
                 pose.getX(), pose.getY(), Math.toDegrees(pose.getHeading()));
         telemetry.addData("Pollen RPM commanded / measured", "%.0f / %.0f",
@@ -79,12 +91,14 @@ public class ShooterTeleOp extends OpMode {
             telemetry.addData("Launch angle (deg)", "%.1f", Math.toDegrees(shot.angle));
             telemetry.addData("Aim error (deg)", "%.1f", Math.toDegrees(shot.headingError));
         }
-        telemetry.addLine("Release G2 RB to stop flywheel. Shoot only after robot and hood settle.");
+        telemetry.addLine("G2 LB: intake | RB: spin up | RT: shoot | X: reverse");
+        telemetry.addLine("Spin up with RB, then hold RT once the robot, hood and RPM settle.");
         telemetry.update();
     }
 
     @Override
     public void stop() {
+        if (intakeTransfer != null) intakeTransfer.stop();
         if (pollen != null) pollen.stop();
         if (nectar != null) nectar.stop();
         if (drive != null) drive.stop();
