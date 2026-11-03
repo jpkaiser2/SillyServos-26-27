@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.config.HardwareNames;
+import org.firstinspires.ftc.teamcode.verydumbpathing.drivetrain.DrivetrainInfo;
 import org.firstinspires.ftc.teamcode.verydumbpathing.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
 
@@ -21,6 +22,19 @@ public class SimpleTeleOp extends OpMode {
     public void init() {
         String[] motor_names = {HardwareNames.LEFT_FRONT_DRIVE, HardwareNames.RIGHT_FRONT_DRIVE, HardwareNames.LEFT_BACK_DRIVE, HardwareNames.RIGHT_BACK_DRIVE};
         drive = new Mecanum(motor_names);
+
+        // create drivetrain info for Mecanum drivetrain object
+        DrivetrainInfo drivetrain = new DrivetrainInfo();
+        drivetrain.horizontal_distance = (403.809 + 380.150 ) / 2;
+        drivetrain.horizontal_distance /= 10; // to cm
+
+        drivetrain.lengthwise_distance = 260.036;
+        drivetrain.lengthwise_distance /= 10; // to cm
+
+        drivetrain.pulses_per_rotation = 1425.1; // set pulses per rotation for 117 rpm Yellow Jacket Motor
+        drivetrain.wheel_radius = 9.2;
+
+        drive.drivetrain = drivetrain;
 
         telemetry.addLine("Very Dumb TeleOp ready");
         telemetry.update();

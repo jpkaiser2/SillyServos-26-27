@@ -7,7 +7,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.config.HardwareNames;
 
-// this is a bit redundant, but also means that we could implement tracking relative to april tags later
+// this is a bit redundant, but also means that we could implement tracking relative to april tags later using the interface with little resistance form the codebase
 public class odo implements trackable{
 
     GoBildaPinpointDriver device;
@@ -21,12 +21,12 @@ public class odo implements trackable{
         return true;
     }
 
-    public double x(DistanceUnit units) {
-        return device.getPosX(units);
+    public double x() {
+        return device.getPosX(DistanceUnit.CM);
     }
 
-    public double y(DistanceUnit units) {
-        return device.getPosY(units);
+    public double y() {
+        return device.getPosY(DistanceUnit.CM);
     }
 
     public double yaw() {
