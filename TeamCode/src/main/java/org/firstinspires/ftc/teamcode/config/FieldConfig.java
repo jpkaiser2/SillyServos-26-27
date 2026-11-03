@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.config;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 
 /**
- * One field frame for every start and hive: center = (0, 0), +X toward the blue
- * alliance wall, +Y left when facing +X. Headings are counterclockwise from +X.
- * Positions/heights are meters; start headings below are entered in degrees.
+ * Official Pedro field frame: bottom-left = (0, 0), +X right, +Y up in the
+ * field diagram. Field center = (72, 72) inches. Headings are counterclockwise
+ * from +X (right). Positions/heights are inches; start headings are degrees.
+ * https://pedropathing.com/docs/pathing/reference/coordinates
  */
 public final class FieldConfig {
     public static final double METERS_PER_INCH = 0.0254;
@@ -14,7 +15,7 @@ public final class FieldConfig {
     private FieldConfig() { }
 
     public enum Alliance {
-        // TODO: Enter each fixed scoring aim point as (x meters, y meters, height meters).
+        // TODO: Enter each fixed scoring aim point as (x inches, y inches, height inches).
         // Pollen first, nectar second. If their aim points coincide, use the same values.
         RED(new Target(UNMEASURED, UNMEASURED, UNMEASURED),
                 new Target(UNMEASURED, UNMEASURED, UNMEASURED)),
@@ -32,7 +33,7 @@ public final class FieldConfig {
 
     public enum StartPosition {
         // TODO: Measure the odometry reference point, not the robot's edge.
-        // Arguments: label, alliance, x meters, y meters, heading degrees.
+        // Arguments: label, alliance, x inches, y inches, heading degrees.
         // Left/right are named from that alliance's view into the field.
         RED_RIGHT("Red Right", Alliance.RED, UNMEASURED, UNMEASURED, UNMEASURED),
         RED_LEFT("Red Left", Alliance.RED, UNMEASURED, UNMEASURED, UNMEASURED),
@@ -41,44 +42,43 @@ public final class FieldConfig {
 
         public final String label;
         public final Alliance alliance;
-        public final double xMeters;
-        public final double yMeters;
+        public final double xInches;
+        public final double yInches;
         public final double headingDegrees;
 
-        StartPosition(String label, Alliance alliance, double xMeters, double yMeters,
+        StartPosition(String label, Alliance alliance, double xInches, double yInches,
                       double headingDegrees) {
             this.label = label;
             this.alliance = alliance;
-            this.xMeters = xMeters;
-            this.yMeters = yMeters;
+            this.xInches = xInches;
+            this.yInches = yInches;
             this.headingDegrees = headingDegrees;
         }
 
         public boolean isMeasured() {
-            return Double.isFinite(xMeters) && Double.isFinite(yMeters)
+            return Double.isFinite(xInches) && Double.isFinite(yInches)
                     && Double.isFinite(headingDegrees);
         }
 
         public Pose toPedroPose() {
-            return new Pose(xMeters / METERS_PER_INCH, yMeters / METERS_PER_INCH,
-                    Math.toRadians(headingDegrees));
+            return new Pose(xInches, yInches, Math.toRadians(headingDegrees));
         }
     }
 
     public static final class Target {
-        public final double xMeters;
-        public final double yMeters;
-        public final double heightMeters;
+        public final double xInches;
+        public final double yInches;
+        public final double heightInches;
 
-        public Target(double xMeters, double yMeters, double heightMeters) {
-            this.xMeters = xMeters;
-            this.yMeters = yMeters;
-            this.heightMeters = heightMeters;
+        public Target(double xInches, double yInches, double heightInches) {
+            this.xInches = xInches;
+            this.yInches = yInches;
+            this.heightInches = heightInches;
         }
 
         public boolean isMeasured() {
-            return Double.isFinite(xMeters) && Double.isFinite(yMeters)
-                    && Double.isFinite(heightMeters) && heightMeters >= 0;
+            return Double.isFinite(xInches) && Double.isFinite(yInches)
+                    && Double.isFinite(heightInches) && heightInches >= 0;
         }
     }
 }

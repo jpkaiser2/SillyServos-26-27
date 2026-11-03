@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -20,6 +21,8 @@ public class TemplateTeleOp extends OpMode {
 
     @Override
     public void start() {
+        // This template uses a local origin; Pinpoint may retain a previous OpMode's pose.
+        drive.setStartingPose(Pose.zero());
         drive.startTeleOpDrive();
     }
 
@@ -31,9 +34,9 @@ public class TemplateTeleOp extends OpMode {
         drive.setDrivePowers(forward, strafe, turn, RobotConstants.FIELD_CENTRIC_TELEOP);
         drive.update();
 
-        telemetry.addData("x", drive.getPose().getX());
-        telemetry.addData("y", drive.getPose().getY());
-        telemetry.addData("heading", drive.getPose().getHeading());
+        telemetry.addData("x", drive.getPose().x());
+        telemetry.addData("y", drive.getPose().y());
+        telemetry.addData("heading", drive.getPose().heading());
         telemetry.update();
     }
 

@@ -5,6 +5,7 @@ This repository contains the public FTC SDK for the BIOBUZZ (2026-2027) competit
 ## Welcome!
 
 Team shooter code: see [pollen/nectar setup and Shooter TeleOp controls](docs/SHOOTERS.md).
+Pedro Pathing 3: see [installation and robot tuning steps](docs/PEDRO_SETUP.md).
 
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 

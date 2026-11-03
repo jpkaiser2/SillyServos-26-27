@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -30,8 +30,8 @@ public final class Turret {
     /** Call every loop, even when stopped, so aim follows the current odometry pose. */
     public void update(Pose pose, FieldConfig.Target target, boolean spin) {
         // Pedro uses inches; the PDF uses meters. Heading is already in radians.
-        shot = ShooterMath.solve(pose.getX() * FieldConfig.METERS_PER_INCH,
-                pose.getY() * FieldConfig.METERS_PER_INCH, pose.getHeading(), config, target);
+        shot = ShooterMath.solve(pose.x() * FieldConfig.METERS_PER_INCH,
+                pose.y() * FieldConfig.METERS_PER_INCH, pose.heading(), config, target);
         if (!spin || shot == null) {
             stop();
             return;

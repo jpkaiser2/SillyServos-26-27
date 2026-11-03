@@ -44,28 +44,32 @@ Enter the measurements in `config/FieldConfig.java`. They are currently `UNMEASU
 the TeleOp shows which values are missing and refuses to start until the selected start
 and its alliance's two aim points are filled in. The other alliance can be measured later.
 
-Use this **same fixed coordinate frame for every start and hive**:
+Use the [official Pedro coordinate frame](https://pedropathing.com/docs/pathing/reference/coordinates)
+for **every start and hive**, with directions viewed as in Pedro's field diagram:
 
-- Origin `(0, 0)` is the center of the field.
-- `+X` points from the center toward the blue alliance wall.
-- `+Y` points left when looking along `+X` (90 degrees counterclockwise).
-- X/Y coordinates and hive heights are **meters**. Heights are above the floor.
+- Origin `(0, 0)` is the **bottom-left corner**; field center is `(72, 72)` inches.
+- `+X` points **right** and `+Y` points **up** in the diagram.
+- X/Y coordinates and hive heights in `FieldConfig` are **inches**. Heights are above the floor.
 - Start headings are entered in **degrees**: 0 faces +X, 90 faces +Y, 180 faces -X,
   and 270 (or -90) faces -Y. Positive rotation is counterclockwise.
 
 `StartPosition` contains independent `(x, y, heading)` measurements for all four starts,
 measured at the **odometry reference point**, with left/right named from that alliance's
 view into the field. `Alliance.RED` and `Alliance.BLUE` contain fixed pollen and nectar hive
-aim points as `(x, y, height)`. If pollen and nectar aim at the same location, enter the same
+aim points as `(x, y, height)` in inches. If pollen and nectar aim at the same location, enter the same
 coordinates for both. Measure the intended scoring point, not just the hive's outside edge.
 
-At Play, the selected pose is converted from meters/degrees to Pedro's inches/radians and
-used to initialize odometry once. During the match, odometry tracks the robot in this field
+At Play, the selected X/Y are passed directly to Pedro, the heading is converted from degrees
+to radians, and odometry is initialized once. No origin shift or alliance rotation is applied.
+During the match, odometry tracks the robot in this field
 frame and each shooter recalculates its distance and aim from that pose to its alliance's
 fixed hive. Changing starts never moves, mirrors, or offsets the hive coordinates. Both red
 starts use the same red targets, and both blue starts use the same blue targets.
 
-Telemetry shows the selected start/alliance, fixed hive coordinates, robot-to-hive horizontal
+The shooter equations convert both robot and hive positions to meters while preserving this
+origin and axis orientation. Shooter hardware measurements in `ShooterConfig` remain in meters.
+
+Telemetry shows the selected start/alliance, fixed hive coordinates in inches, robot-to-hive horizontal
 distance, and the launch-point distance used by a valid shot. Launch-point distance includes
 the individual shooter's mounting offsets. Position accuracy depends on measured starts,
 headings, and correctly calibrated odometry. This TeleOp expects the robot at the selected
@@ -127,8 +131,8 @@ the static block, for example `POLLEN.wheelDiameter = ...;` and `NECTAR.rpmCorre
 In `config/RobotConstants.java`, measure the Pinpoint pod offsets in **inches**, select the
 installed pod type, and verify encoder and drive directions. Configure starting poses in
 `FieldConfig` as described above. Tune `AIM_KP`,
-`MAX_AIM_POWER`, and the heading tolerance on the robot. Pedro defaults still need robot-specific
-drivetrain/path-following tuning before using autonomous paths.
+`MAX_AIM_POWER`, and the heading tolerance on the robot. See [Pedro 3 setup](PEDRO_SETUP.md)
+for AutoTune and applying its results to `pedroPathing/Constants.java` before using autonomous paths.
 
 ## Math implementation
 

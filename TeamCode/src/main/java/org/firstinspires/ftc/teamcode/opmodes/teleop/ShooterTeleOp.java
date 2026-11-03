@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -55,8 +55,8 @@ public class ShooterTeleOp extends OpMode {
         telemetry.addData("Pollen hive measured", start.alliance.pollenHive.isMeasured());
         telemetry.addData("Nectar hive measured", start.alliance.nectarHive.isMeasured());
         if (start.isMeasured()) {
-            telemetry.addData("Starting pose (m, m, deg)", "%.2f, %.2f, %.1f",
-                    start.xMeters, start.yMeters, start.headingDegrees);
+            telemetry.addData("Starting pose (in, in, deg)", "%.1f, %.1f, %.1f",
+                    start.xInches, start.yInches, start.headingDegrees);
         }
         telemetry.addLine("Enter missing measurements in FieldConfig. Place robot at selected start.");
         telemetry.addLine("G2 A: pollen | B: nectar | RB: spin up | RT: shoot");
@@ -121,14 +121,13 @@ public class ShooterTeleOp extends OpMode {
 
         telemetry.addData("Selected", selectPollen ? "Pollen" : "Nectar");
         telemetry.addData("Starting position / alliance", "%s / %s", starts[startIndex].label, alliance);
-        telemetry.addData("Hive (m, m, height m)", "%.2f, %.2f, %.2f",
-                hive.xMeters, hive.yMeters, hive.heightMeters);
+        telemetry.addData("Hive (in, in, height in)", "%.1f, %.1f, %.1f",
+                hive.xInches, hive.yInches, hive.heightInches);
         telemetry.addData("Robot-to-hive distance (m)", "%.2f", Math.hypot(
-                hive.xMeters - pose.getX() * FieldConfig.METERS_PER_INCH,
-                hive.yMeters - pose.getY() * FieldConfig.METERS_PER_INCH));
+                hive.xInches - pose.x(), hive.yInches - pose.y()) * FieldConfig.METERS_PER_INCH);
         telemetry.addData("Intake / transfer", reverse ? "Reverse" : feed ? "Forward" : "Stopped");
         telemetry.addData("Pose (in, in, deg)", "%.1f, %.1f, %.1f",
-                pose.getX(), pose.getY(), Math.toDegrees(pose.getHeading()));
+                pose.x(), pose.y(), Math.toDegrees(pose.heading()));
         telemetry.addData("Pollen RPM commanded / measured", "%.0f / %.0f",
                 pollen.getCommandedRpm(), pollen.getMeasuredRpm());
         telemetry.addData("Nectar RPM commanded / measured", "%.0f / %.0f",

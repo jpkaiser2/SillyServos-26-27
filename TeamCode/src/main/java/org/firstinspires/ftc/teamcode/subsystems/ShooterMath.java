@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 import org.firstinspires.ftc.teamcode.config.FieldConfig;
 
-/** Equations from SillyServosShooterMath. All inputs use SI units. */
+/** Equations from SillyServosShooterMath. Robot pose/config use SI; field targets use inches. */
 public final class ShooterMath {
     private static final double GRAVITY = 9.81;
 
@@ -36,10 +36,11 @@ public final class ShooterMath {
                 - c.leftOffset * Math.sin(heading);
         double launchY = robotY + c.forwardOffset * Math.sin(heading)
                 + c.leftOffset * Math.cos(heading);
-        double dx = target.xMeters - launchX;
-        double dy = target.yMeters - launchY;
+        // FieldConfig uses Pedro inches; projectile motion uses meters throughout.
+        double dx = target.xInches * FieldConfig.METERS_PER_INCH - launchX;
+        double dy = target.yInches * FieldConfig.METERS_PER_INCH - launchY;
         double distance = Math.hypot(dx, dy);
-        double height = target.heightMeters - c.launchHeight;
+        double height = target.heightInches * FieldConfig.METERS_PER_INCH - c.launchHeight;
         if (!Double.isFinite(distance) || distance < 1e-6 || !Double.isFinite(height)) {
             return null;
         }
