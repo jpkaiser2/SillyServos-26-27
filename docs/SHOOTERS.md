@@ -1,5 +1,18 @@
 # Pollen and nectar shooters
 
+For guided calibration with minimal measuring, use **Turret Tuner** and follow the
+[README walkthrough](../README.md#calibrate-the-shooters-and-feeding). It uses a local
+practice target and tuned Pedro odometry to fit hood angles, RPM correction, and horizontal
+mounting angle from four successful shots per shooter. It does not require FieldConfig.
+Its stationary/RPM feed gate and gamepad controls are specific to the tuner; the controls
+below describe Shooter TeleOp.
+
+Shooter TeleOp loads robot-local profiles from `SillyServosShooterCalibration.json` at INIT.
+Saved hood angles/endpoints, `rpmCorrection`, and `headingOffset` override ShooterConfig
+defaults. The other hardware measurements still come from ShooterConfig. Initialization
+reports whether a saved profile loaded or was ignored; changed source geometry requires
+retuning. Save/delete profiles from the tuner as described in the README.
+
 Select **Shooter TeleOp** on the Driver Station. It uses the same Pedro stick controls as
 TemplateTeleOp. `Turret` owns one flywheel and one hood; the TeleOp creates a separate
 instance for each ball type. As in SillyServosShooterMath.pdf, the chassis aims horizontally.
@@ -105,6 +118,11 @@ the right is always the opposite. Tune `INTAKE_POWER`, `POLLEN_TRANSFER_POWER`, 
 ## Measurements and tuning
 
 **The supplied numbers are examples, not measured robot or field dimensions.**
+
+The steps below also describe manual configuration. Turret Tuner can infer the two hood
+angles, their mapping, k, and the horizontal mounting angle, so those do not have to be
+measured by hand. Its estimates still require verification at several distances and
+assume the hood's angle/servo mapping is linear.
 
 Edit `config/ShooterConfig.java`. `POLLEN` and `NECTAR` are independent configurations.
 The robot geometry still uses example values. Assign measured values separately in

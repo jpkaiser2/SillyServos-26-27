@@ -45,6 +45,24 @@ public final class Turret {
         return shot;
     }
 
+    /** Direct hood/RPM control for calibration. The operator must explicitly hold its control. */
+    public boolean tune(double hoodPosition, double wheelRpm) {
+        if (!Double.isFinite(hoodPosition) || hoodPosition < 0 || hoodPosition > 1
+                || !Double.isFinite(wheelRpm) || wheelRpm < 0
+                || !Double.isFinite(config.maxWheelRpm) || wheelRpm > config.maxWheelRpm
+                || !Double.isFinite(config.wheelToMotorRatio) || config.wheelToMotorRatio <= 0
+                || !Double.isFinite(config.ticksPerMotorRevolution)
+                || config.ticksPerMotorRevolution <= 0) {
+            stop();
+            return false;
+        }
+        hood.setPosition(hoodPosition);
+        commandedRpm = wheelRpm;
+        if (wheelRpm == 0) stop();
+        else flywheel.setVelocity(ShooterMath.motorTicksPerSecond(wheelRpm, config));
+        return true;
+    }
+
     public double getCommandedRpm() {
         return commandedRpm;
     }

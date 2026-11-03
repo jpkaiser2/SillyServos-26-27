@@ -44,4 +44,24 @@ public final class ShooterConfig {
         this.flywheelName = flywheelName;
         this.hoodName = hoodName;
     }
+
+    /** Each OpMode gets its own settings; tuning must not mutate the shared defaults. */
+    public ShooterConfig copy() {
+        ShooterConfig copy = new ShooterConfig(flywheelName, hoodName);
+        copy.motorDirection = motorDirection;
+        copy.launchHeight = launchHeight;
+        copy.forwardOffset = forwardOffset;
+        copy.leftOffset = leftOffset;
+        copy.headingOffset = headingOffset;
+        copy.wheelDiameter = wheelDiameter;
+        copy.rpmCorrection = rpmCorrection;
+        copy.wheelToMotorRatio = wheelToMotorRatio;
+        copy.ticksPerMotorRevolution = ticksPerMotorRevolution;
+        copy.maxWheelRpm = maxWheelRpm;
+        copy.minAngle = minAngle;
+        copy.maxAngle = maxAngle;
+        copy.servoAtMinAngle = servoAtMinAngle;
+        copy.servoAtMaxAngle = servoAtMaxAngle;
+        return copy;
+    }
 }

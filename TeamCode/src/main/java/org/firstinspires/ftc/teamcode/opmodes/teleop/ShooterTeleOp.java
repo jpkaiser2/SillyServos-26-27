@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
 import org.firstinspires.ftc.teamcode.config.FieldConfig;
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
+import org.firstinspires.ftc.teamcode.config.ShooterCalibrationStore;
 import org.firstinspires.ftc.teamcode.pedroPathing.PedroMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterMath;
@@ -26,12 +27,18 @@ public class ShooterTeleOp extends OpMode {
     private boolean previousLeft;
     private boolean previousRight;
     private boolean fieldReady;
+    private String pollenCalibration;
+    private String nectarCalibration;
 
     @Override
     public void init() {
         drive = new PedroMecanumDrive(hardwareMap);
-        pollen = new Turret(hardwareMap, ShooterConfig.POLLEN);
-        nectar = new Turret(hardwareMap, ShooterConfig.NECTAR);
+        ShooterCalibrationStore.Loaded pollenSettings = ShooterCalibrationStore.load(ShooterConfig.POLLEN);
+        ShooterCalibrationStore.Loaded nectarSettings = ShooterCalibrationStore.load(ShooterConfig.NECTAR);
+        pollen = new Turret(hardwareMap, pollenSettings.config);
+        nectar = new Turret(hardwareMap, nectarSettings.config);
+        pollenCalibration = pollenSettings.message;
+        nectarCalibration = nectarSettings.message;
         intakeTransfer = new IntakeTransfer(hardwareMap);
         showStartSelection();
     }
@@ -51,6 +58,8 @@ public class ShooterTeleOp extends OpMode {
         telemetry.addLine("G1 D-pad left/right: select starting position before Play");
         telemetry.addData("Starting position", start.label);
         telemetry.addData("Target alliance", start.alliance);
+        telemetry.addData("Pollen calibration", pollenCalibration);
+        telemetry.addData("Nectar calibration", nectarCalibration);
         telemetry.addData("Start measured", start.isMeasured());
         telemetry.addData("Pollen hive measured", start.alliance.pollenHive.isMeasured());
         telemetry.addData("Nectar hive measured", start.alliance.nectarHive.isMeasured());

@@ -6,7 +6,7 @@ matching the [official Quickstart's dependencies](https://github.com/Pedro-Pathi
 The Dairy repository from the [installation guide](https://pedropathing.com/docs/pathing/installation)
 is configured alongside Maven Central in `build.dependencies.gradle`.
 
-The drive wrapper, both TeleOps, TemplateAuto, and shooter pose calculations have been
+The drive wrapper, TeleOps, TemplateAuto, and shooter pose calculations have been
 migrated to Pedro 3. `pedroPathing/Constants.java` shares hardware configuration between the
 drive wrapper and AutoTune. `pedroPathing/Tuning.java` registers the official Mecanum,
 Pinpoint, and Foresight procedures under `pedroPathing/procedures`.
@@ -71,3 +71,6 @@ Pedro tuning does not supply field start positions, hive coordinates, or shooter
 Fill in `FieldConfig` and `ShooterConfig` as described in [SHOOTERS.md](SHOOTERS.md).
 ShooterTeleOp still requires its selected start and alliance hive measurements before Play.
 The four-start selector and the bottom-left-origin Pedro field coordinates are preserved.
+Turret Tuner instead establishes a local origin beneath a practice target at Play. Once
+Pedro is tuned, it can calibrate the shooters without field start or hive coordinates;
+see the [README walkthrough](../README.md#calibrate-the-shooters-and-feeding).

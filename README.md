@@ -4,7 +4,7 @@ FTC robot software for driving, collecting balls, and shooting **pollen** and **
 
 The main program is **Shooter TeleOp**. It tracks the robot's position, calculates a shot for each shooter, and lets two drivers control driving, aiming, spin-up, and feeding.
 
-**Start here:** tune the drivetrain and odometry first. Then enter the field measurements and calibrate the shooters. Field measurements are currently unset, and shooter dimensions are examples; a successful build does not mean those values match the robot.
+**Start here:** tune the drivetrain and odometry first, then use **Turret Tuner** to calibrate the shooters on a practice target. Field measurements are only needed for the main Shooter TeleOp. Those measurements are currently unset, and shooter dimensions are examples; a successful build does not mean those values match the robot.
 
 Drivers can start with the controls below. For first setup, work through one tuning section at a time; Foresight can wait until you are ready to add autonomous paths.
 
@@ -27,7 +27,8 @@ An **OpMode** is a program selected on the Driver Station. This project provides
 | Program | Purpose | What it needs |
 | --- | --- | --- |
 | **Template TeleOp** | Drive with the sticks and display position. Sets a local `(0, 0, 0)` pose at Play. | Four drive motors and Pinpoint; configured and calibrated for accurate driving. |
-| **Shooter TeleOp** | Drive, aim the chassis, control both shooters, and run intake/transfer. | All hardware below, shooter calibration, and the selected start plus both hive aim points for that alliance. |
+| **Shooter TeleOp** | Drive, aim the chassis, control both shooters, and run intake/transfer. Loads saved turret calibration at INIT. | All hardware below, shooter calibration, and the selected start plus both hive aim points for that alliance. |
+| **Turret Tuner** | Adjust hood/RPM live, record successful shots, calculate calibration, and save it on the robot. | All hardware below, tuned Pedro, basic shooter geometry, and a practice target. No FieldConfig measurements or Foresight needed. |
 | **Template Auto** | A timed driving example: currently 0.35 power for 1.5 seconds. Assumes `(72, 72, 0)` at initialization. | Drive motors and Pinpoint. This does not follow a Pedro path or score balls. |
 
 **Pedro and Pinpoint track position.** The Pinpoint uses odometry wheels and its heading sensor to estimate the robot's **pose**: X, Y, and which direction it faces. At Play, Shooter TeleOp sets this pose to the selected starting position. From then on, movement updates the pose.
@@ -38,7 +39,7 @@ Every loop, `ShooterMath` uses the robot pose, the shooter's mounting offset, an
 
 **Both feed paths run together.** The intake also feeds nectar. Pollen has a separate transfer motor and two continuous-rotation servos commanded in opposite directions. Intake and shooting commands run both paths; reverse reverses both paths and stops the flywheels.
 
-The shot calculation assumes a stationary robot. There is no camera-based position correction, automatic ball detection, or automatic wait for aim/RPM before feeding. Stop moving and let the hood and flywheel settle before shooting.
+The shot calculation assumes a stationary robot. Shooter TeleOp has no camera-based position correction, automatic ball detection, or automatic wait for aim/RPM before feeding. Turret Tuner adds a stationary/RPM check for its calibration shots. Stop moving and let the hood and flywheel settle before shooting.
 
 <details>
 <summary>The shot math, if you want the details</summary>
@@ -61,6 +62,8 @@ See [ShooterMath.java][shooter-math] and the [shooter reference](docs/SHOOTERS.m
 </details>
 
 ## Driver controls
+
+These are **Shooter TeleOp** controls. [Turret Tuner uses its own controls](#2-set-up-turret-tuner) below.
 
 **G1** means gamepad 1, the driver. **G2** means gamepad 2, the shooter operator. **LB/RB** are the left/right bumpers; **RT** is the right trigger. Buttons marked **hold** act only while held; A/B select a shooter until changed.
 
@@ -187,75 +190,100 @@ Both red starts use the same fixed red hives; both blue starts use the same fixe
 
 ## Calibrate the shooters and feeding
 
-Do this for **pollen and nectar separately**. Record each measurement as you go. Change one setting at a time, redeploy, and compare several shots before making another change.
+**Use Turret Tuner for this.** It assumes Pedro is already tuned and takes over the repetitive work: Pedro measures shot distances, and four successful observations estimate two launch angles, the wheel-speed correction **k**, and horizontal mounting angle. You do not need a protractor, measured field starts, or repeated tape-measure distances.
 
-### 1. Enter the physical measurements
+The tuner does not detect hits. You find repeatable hits with live hood/RPM controls and tell it which shots succeeded. Its estimates use the same projectile model as Shooter TeleOp, so verify them at several distances before using them in a match.
 
-Edit the `static { ... }` block in [ShooterConfig.java][shooter-config] using assignments such as `POLLEN.wheelDiameter = ...;` and `NECTAR.wheelDiameter = ...;`. Replace the dots with measurements, rather than leaving both shooters on the shared example defaults.
+### 1. Enter the few measurements that are still needed
 
-| Setting | What to measure or verify |
+In [ShooterConfig.java][shooter-config], set these separately for `POLLEN` and `NECTAR` in the `static { ... }` block. For example, assign `POLLEN.wheelDiameter` to the wheel's actual diameter. These are one-time geometry/specification inputs, not settings to change after every shot.
+
+| Setting | What to enter |
 | --- | --- |
-| `launchHeight` | Height of the ball's launch point above the floor, in **meters**. |
-| `forwardOffset`, `leftOffset` | Launch point relative to the odometry reference, in **meters**. Forward/left positive; backward/right negative. |
-| `headingOffset` | Fixed horizontal mounting angle relative to chassis forward, in **radians**, counterclockwise positive. Zero means straight forward. |
-| `wheelDiameter` | Flywheel diameter at its ball-contact surface, in **meters**. |
-| `wheelToMotorRatio` | Flywheel turns per motor output-shaft turn. `2.0` means two wheel turns for one motor turn. |
-| `ticksPerMotorRevolution` | Encoder ticks per motor **output-shaft** revolution, including its internal gearbox; check the motor specification. |
-| `motorDirection` | Direction that makes positive commanded velocity launch the ball forward. |
-| `maxWheelRpm` | An achievable, mechanically appropriate flywheel-speed limit. Verify it on the robot; the example 5000 is not a measured limit. |
+| `launchHeight` | Ball exit height above the floor, in **meters**. Needed for the real hive heights in Shooter TeleOp. |
+| `forwardOffset`, `leftOffset` | Ball exit location relative to the tracked robot reference, in **meters**. Forward/left positive; backward/right negative. |
+| `wheelDiameter` | Ball-contact wheel diameter in **meters**, from its specification or a measurement. |
+| `wheelToMotorRatio` | Wheel turns per motor output-shaft turn. `2.0` means two wheel turns for one motor turn. |
+| `ticksPerMotorRevolution` | Encoder ticks per motor output-shaft revolution, including any internal gearbox; use the motor specification. |
+| `motorDirection` | Direction that launches forward for a positive velocity command. |
+| `maxWheelRpm` | A mechanically appropriate, achievable wheel-speed limit. The example 5000 is not measured for this robot. |
 
-Convert inches to meters by multiplying by **0.0254**. For angle assignments, `Math.toRadians(30)` converts a measured 30° angle into radians. FieldConfig uses inches/degrees; ShooterConfig uses meters/radians.
+Multiply inches by **0.0254** to get meters. Deploy after changing these source settings. The tuner estimates `minAngle`, `maxAngle`, both corresponding servo positions, `rpmCorrection`, and `headingOffset`; you do not need to measure those angles manually.
 
-### 2. Calibrate the servo hoods
+For your practice target, measure its aim point's **vertical height above the ball's exit point**. Enter that difference in the tuner, in **inches**, separately for each shooter. The default 24 inches is just a starting value. Use a target at least **6 inches above** the exit point, preferably higher: a target level with the launcher cannot determine both angle and speed correction from these observations.
 
-Use the SDK's **Test Hardware** utility before attempting shots. On the Driver Station, open **Settings → Utility OpModes → Test Hardware**, then initialize/start it. This utility is included in the repository and does not need the hive measurements. [FTC utility instructions](https://ftc-docs.firstinspires.org/en/latest/utility_opmodes/index.html).
+### 2. Set up Turret Tuner
 
-1. With no balls loaded, use G1 D-pad left/right to select `hoodPollen` or `hoodNectar`.
-2. The left stick Y chooses a servo position from 0 to 1, shown as **Value**. Hold RB to apply it. Start within the mechanism's known free travel and move in small increments; do not force the linkage against its stops.
-3. Find the lowest usable launch angle. Record that angle and its servo position as `minAngle` and `servoAtMinAngle`.
-4. Find the highest usable angle and record `maxAngle` and `servoAtMaxAngle`.
-5. Measure the ball's exit direction above horizontal, not simply the servo horn angle. Check an intermediate position too: the code assumes a straight-line relationship between servo position and launch angle.
-6. Repeat for the other hood, enter the four values per shooter, and redeploy.
+1. Mark the floor directly below the practice target's aim point. This can be a temporary target; it does not have to be an alliance hive.
+2. Put the robot's **tracked odometry reference point** over the mark. Do not use a bumper, the shooter exit, or the Pinpoint enclosure as the reference.
+3. Select **Turret Tuner**, press INIT, and keep still during Pinpoint initialization. Press Play while still over the mark. This establishes local `(0, 0)` at the target; the initial heading may be any direction.
+4. Drive away using G1's sticks. If the target would obstruct the robot, install it over the mark after moving away. Do not restart the OpMode or move the target during a calibration.
+5. Select pollen with **G2 A** or nectar with **G2 B**. Use G2 D-pad left/right to select **Height**, then up/down to enter the measured vertical difference. Each shooter has its own setting.
 
-The servo positions may decrease as the launch angle increases; reversed endpoints are supported. If intermediate angles do not follow the straight-line mapping, `ShooterMath.hoodPosition()` needs a different mapping before the calculated shots will be accurate.
+Only height and basic shooter geometry are measured by hand; Pedro tracks all subsequent horizontal distances. After restarting the OpMode, repeat the floor-mark setup and enter the target height again. FieldConfig and the four alliance starts are not used here.
 
-### 3. Verify feeding and flywheel speed
+**Turret Tuner controls** — these differ from Shooter TeleOp:
 
-Once the selected start and alliance targets are measured, run **Shooter TeleOp** at that start.
-
-- Hold **G2 LB** briefly. Both feed motors and both transfer servos should move balls toward their shooters. In [RobotConstants][robot-constants], correct `INTAKE_DIRECTION`, `POLLEN_TRANSFER_DIRECTION`, or `TRANSFER_LEFT_SERVO_DIRECTION` as needed. The right servo direction is always opposite the left.
-- Adjust `INTAKE_POWER`, `POLLEN_TRANSFER_POWER`, and `TRANSFER_SERVO_POWER` between 0 and 1 for reliable feeding. Begin with reduced values and increase until balls transfer consistently. Check **G2 X** reverses the whole feed system.
-- Select a shooter and hold **G2 RB** without feeding. Confirm its hood moves and its flywheel spins in the launch direction. Compare **commanded / measured RPM** on telemetry after it settles.
-
-If RPM does not track the command, check encoder wiring, configured motor model, ticks per revolution, and gearing first. The flywheel uses the SDK's motor velocity controller; there are currently no adjustable flywheel PIDF constants in this project. Persistent speed-control problems may require adding that tuning. Do not use `rpmCorrection` to hide a motor that cannot reach its requested RPM, or raise the RPM limit merely to bypass **No valid shot**.
-
-The Test Hardware utility can also check individual motors before field measurements are available. In that utility, releasing RB does **not** automatically zero a motor: command zero with RB or press Stop before changing devices.
-
-### 4. Settle the chassis aim
-
-With the shooter selected, stop translating and hold **G1 LB**. It should rotate toward the hive and settle near zero **Aim error**.
-
-| Symptom | Adjustment in RobotConstants |
+| Control | Action |
 | --- | --- |
-| Turns too aggressively or repeatedly overshoots | Reduce `AIM_KP` and/or `MAX_AIM_POWER`. |
-| Barely turns despite a clear heading error | Verify drive directions, then increase `AIM_KP` or the power limit a little. |
-| Keeps making tiny corrections when already aligned | Increase `AIM_TOLERANCE_RADIANS` slightly. |
+| **G1 sticks** | Slow, robot-centric drive/turn. Release hood, spin, feed, and reverse controls to drive. |
+| **G1 LB** | In Verify mode, stop translation and aim at the practice target. Aim before holding spin-up. |
+| **G1 Y** | Switch Manual/Verify when a fitted or saved calibration is available. |
+| **G2 A / B** | Select pollen / nectar; the other flywheel stops. |
+| **G2 D-pad left/right** | Select the value to edit: hood (or k in Verify), RPM, or target height. |
+| **G2 D-pad up/down** | Change that value. Hold to repeat. Steps: servo 0.005, RPM 50, height 0.5 inch, k 1%. |
+| **Hold G2 LB** | Apply the hood position without spinning. **This is not intake in the tuner.** |
+| **Hold G2 RB** | Apply the hood and spin the selected flywheel. |
+| **Hold G2 RB + RT** | Feed through both paths once stationary and RPM has settled. RT alone does not spin or feed. |
+| **Hold G2 X** | Stop flywheels and reverse both feed paths. |
+| **G2 Y**, after releasing RT | Accept the last fed shot **only if it hit the aim point**. |
+| **G2 Back** | Undo one accepted observation and return to Manual. At zero observations, starts Manual tuning. Saved data remains intact. |
+| **G2 Start**, controls released | Save the selected profile from Verify mode. |
+| **G2 Back + Start together**, controls released | Delete only the selected saved profile and return to source defaults. |
 
-Repeat from both sides of the target heading. If it consistently points the wrong way, check pose, hive coordinates, and the shooter's `headingOffset` before changing gains. These aim settings are independent of Foresight's autonomous tuning.
+Outputs stop on shooter/mode changes and when an observation is accepted; release the hood/spin/feed controls before holding them again. Hood positions only move while LB or RB is held. Adjust within the mechanism's free travel; the manual tuner intentionally allows positions across 0–1 so you can find the usable range.
 
-### 5. Tune shot distance
+### 3. Record four successful shots per shooter
 
-Start with the geometry and hood calibration above, then adjust **`rpmCorrection`**, also called **k**. Pollen and nectar each have their own value; both currently start at 1.0.
+Begin in **Manual**. A saved profile starts in Verify; press G1 Y to switch to Manual when retuning. The screen tells you which observation is next.
 
-1. Initialize at a measured starting position and select that start. Drive to a repeatable shooting location with a clear target, then remain stationary for each shot.
-2. Select the ball type, align with G1 LB, and hold G2 RB until the hood and RPM settle. Use G2 RT to feed.
-3. Record distance, hood angle, commanded/measured RPM, k, and whether several shots land short, long, or on target.
-4. If shots consistently fall short while aim, angle, and RPM tracking are correct, raise k slightly—about 2–5% at a time. If they consistently go long, lower it slightly. Deploy and repeat.
-5. Check the result at near, middle, and far shooting locations, then repeat for the other ball type.
+1. **Low hood, first distance:** select Hood and hold G2 LB while adjusting to a visibly low, usable launch angle. Select RPM and adjust it. Aim manually with G1, stop, and hold G2 RB. Wait for **READY**, then add RT for a shot. If it misses, adjust RPM/aim and try again. Once hits are repeatable, release RT and press G2 Y to accept a representative hit.
+2. **Same hood, second distance:** release controls and drive at least **12 inches nearer or farther** in horizontal distance from the target. More separation improves the fit. Keep the hood fixed; the tuner locks it for this pair. Find a hit by changing RPM and aim, then accept it with Y. Moving sideways the same distance from the target does not count as a different distance.
+3. **High hood, first distance:** the tuner now asks for a visibly **higher launch angle**. Select and apply a suitable hood position with LB, find repeatable hits, and accept one. A higher angle can mean a lower servo number, depending on the linkage.
+4. **Same high hood, second distance:** again move at least 12 inches nearer/farther, leave the hood fixed, adjust RPM/aim, and accept a hit.
 
-At the same pose, increasing k by 5% increases commanded wheel RPM by 5%. One correction factor may not remove every distance-dependent error; recheck hood mapping, wheel contact, and geometry if one distance works but others do not. The model assumes the robot is stationary and does not explicitly model air drag or ball spin.
+The first feed command captures the current pose and measured RPM. Pressing Y accepts that captured observation, not the robot's later location. A fresh RT press replaces a missed shot with a new observation. Feed one ball per trial; keep the unused feed path empty because both paths run together.
 
-**Ready-to-use checkpoint:** measured pose agrees with the field, aim settles, each hood reaches the calculated angle, measured RPM follows its command, and repeated shots work from several distances.
+For feeding, the tuner waits for no drive command, little pose movement, and RPM within **3% or 50 RPM**, whichever is larger. It requires a settling interval before showing READY. This confirms stable speed, not accurate aim or a detected hit. Wait for the hood itself to settle too.
+
+After four accepted hits, the tuner checks the fit and enters **Verify**. It rejects pairs with too little distance separation, inconsistent launch angles/corrections, or inconsistent horizontal aim. Read the displayed reason, use Back to undo observations as needed, and retry. Target height is locked after the first accepted hit; undo all observations to correct it.
+
+### 4. Verify and save
+
+In **Verify**, the existing shooter math chooses hood angle and RPM from the live Pedro distance. The fitted two hood positions define the usable angle range; they do not need to be the mechanism's hard stops.
+
+1. Release G2 controls, move to a different shooting distance, and hold G1 LB to align. Then hold G2 RB, wait for READY, and add RT.
+2. Check several shots at near, middle, and far distances. Verify an intermediate hood setting too: the code still assumes angle changes linearly with servo position.
+3. If hits consistently fall short while RPM follows its command, select **k** and increase it a few 1% steps. If they consistently go long, decrease it. These edits take effect live. If the error changes strongly with distance, revisit height, odometry, the original observations, or the hood linkage instead of correcting just one distance.
+4. Release hood/spin/feed controls and press **G2 Start**. Wait for **SAVED**. Repeat the process for the other shooter.
+
+Saving does **not** rewrite Java. It stores both independent profiles in **`SillyServosShooterCalibration.json`** in the Robot Controller's FTC settings directory. Normal code deployment keeps this file; back it up before replacing/resetting the controller. Observations and practice-target height are session-only and are not saved.
+
+**Shooter TeleOp automatically loads the saved profiles at its next INIT**, with a status message for each shooter. No rebuild is needed after a calibration save. Saved angles, servo endpoints, k, and heading offset override the corresponding ShooterConfig defaults. Changing those defaults alone will not override a saved profile: delete that profile in the tuner if you want to use the source values instead.
+
+If wheel geometry, encoder gearing, launch position, hood name, or motor direction changes in code, the loader ignores the old profile and asks for retuning. If the physical robot changes without corresponding code changes, retune it yourself. Invalid/unreadable profiles fall back to source defaults with a message; those example defaults are not evidence of a calibrated shooter.
+
+### 5. Check feeding and chassis aim
+
+Set feed directions and powers in [RobotConstants][robot-constants]: `INTAKE_DIRECTION`, `POLLEN_TRANSFER_DIRECTION`, `TRANSFER_LEFT_SERVO_DIRECTION`, and the three feed-power magnitudes. Positive motion must feed toward the shooters; the right transfer servo is automatically opposite the left. Verify with reduced power before loading balls.
+
+The SDK's **Test Hardware** utility can check individual motors before field measurements are available: Driver Station **Settings → Utility OpModes → Test Hardware**. Follow its on-screen controls. Unlike these TeleOps, releasing RB in that utility does not zero a motor; apply zero or press Stop before changing devices. [FTC utility instructions](https://ftc-docs.firstinspires.org/en/latest/utility_opmodes/index.html).
+
+If measured flywheel RPM will not follow the command, check motor model, encoder wiring, gearing, and resolution first. The tuner does not tune the SDK velocity PIDF controller, automatically find a safe maximum RPM, or fix a nonlinear hood linkage. Do not use k to hide an unreachable speed.
+
+In Shooter TeleOp, hold G1 LB and watch **Aim error**. Reduce `AIM_KP` or `MAX_AIM_POWER` if it overshoots; increase cautiously if it barely turns. Increase `AIM_TOLERANCE_RADIANS` slightly if it keeps making tiny corrections after aligning. Turret Tuner's Verify mode uses the same gain/tolerance but caps turning power at 0.3. These settings are independent of Foresight.
+
+**Ready-to-use checkpoint:** verify the saved profiles loaded, then check real hive shots from several positions with correct FieldConfig measurements. Shooter TeleOp still feeds immediately on RT; the tuner's settling gate only applies in **Turret Tuner**.
 
 ## Tune Foresight for future autonomous paths
 
@@ -276,6 +304,9 @@ Future paths or position holding should use `Constants.create(hardwareMap)` afte
 | What you see | What to check first |
 | --- | --- |
 | Hardware not found during INIT | Exact configuration names, device types, active configuration, and connected ports. Shooter TeleOp initializes both shooters and all feed hardware. |
+| Turret Tuner stays waiting instead of READY | Hold RB, release drive inputs, move at least 12 inches from the target, enter height ≥6 inches, and check measured RPM reaches the request. |
+| Turret fit is rejected | Verify the vertical height difference, accept only central hits, separate each pair's distances by ≥12 inches, and keep its hood fixed. Back undoes observations. |
+| Calibration changes seem to disappear | G2 Start saves from Verify. Check for SAVED, confirm the same Robot Controller is in use, and read Shooter TeleOp's calibration status at INIT. |
 | AutoTune page will not open | Computer on robot Wi-Fi, correct robot IP, `http` rather than `https`, port `10158`, and the latest app deployed/running. |
 | Shooter TeleOp stops as soon as Play is pressed | Selected start and both aim points for its alliance still contain `UNMEASURED`. Read the initialization telemetry. |
 | Distance changes incorrectly or aim points away from the hive | Pinpoint directions/offsets, selected start, heading, and field units. Recheck with Template TeleOp. |
@@ -291,7 +322,10 @@ Most robot work belongs under `TeamCode/src/main/java/org/firstinspires/ftc/team
 
 | File | Responsibility |
 | --- | --- |
-| [ShooterTeleOp.java][shooter-teleop] | Gamepad controls, start selection, and coordination of driving/shooting/feeding. |
+| [ShooterTeleOp.java][shooter-teleop] | Gamepad controls, start selection, saved calibration loading, and coordination of driving/shooting/feeding. |
+| [TurretTuningTeleOp.java][turret-tuner] | Guided manual trials, calculated verification shots, and save/undo controls. |
+| [TurretCalibration.java][turret-calibration] | Fits launch angles, k, and horizontal mounting angle from successful shots. |
+| [ShooterCalibrationStore.java][calibration-store] | Saves/loads per-shooter calibration and detects changes to source geometry. |
 | [HardwareNames.java][hardware-names] | Hardware configuration names. |
 | [RobotConstants.java][robot-constants] | Feed directions/powers, manual-drive limits, chassis aim settings, and initial odometry defaults. |
 | [FieldConfig.java][field-config] | Four starting poses and fixed red/blue hive aim points. |
@@ -316,3 +350,7 @@ For deeper reference, see [shooter configuration and equations](docs/SHOOTERS.md
 [pedro-constants]: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pedroPathing/Constants.java
 [tuning]: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pedroPathing/Tuning.java
 [drive]: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pedroPathing/PedroMecanumDrive.java
+
+[turret-tuner]: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/teleop/TurretTuningTeleOp.java
+[turret-calibration]: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/TurretCalibration.java
+[calibration-store]: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/config/ShooterCalibrationStore.java
