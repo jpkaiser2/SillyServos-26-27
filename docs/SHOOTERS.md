@@ -14,7 +14,7 @@ reports whether a saved profile loaded or was ignored; changed source geometry r
 retuning. Save/delete profiles from the tuner as described in the README.
 
 Select **Shooter TeleOp** on the Driver Station. It uses the same Pedro stick controls as
-TemplateTeleOp. `Turret` owns one flywheel and one hood; the TeleOp creates a separate
+TemplateTeleOp. `Turret` owns one flywheel, one hood, and one blocking gate; the TeleOp creates a separate
 instance for each ball type. As in SillyServosShooterMath.pdf, the chassis aims horizontally.
 
 Before Play, press **gamepad 1 D-pad left/right** to cycle through **Red Right, Red Left,
@@ -36,7 +36,9 @@ same alliance.
 | Hold gamepad 2 X | Reverse intake, transfer, and transfer servos; stop flywheels |
 | Release gamepad 2 bumpers, trigger, and X | Stop flywheel, intake, transfer, and transfer servos |
 
-Selecting the other shooter stops the previous one. Stop stops both flywheels, both feed
+Only the selected shooter opens its blocking gate on a valid RT shoot command. Intake-only
+and RB-only spin-up keep both gates closed. Releasing RT, reversing, an invalid shot, or
+Stop closes the gates. Selecting the other shooter closes the previous gate and stops its flywheel. Stop stops both flywheels, both feed
 motors, both transfer servos, and the drive. `IntakeTransfer` owns the two feed motors and
 the two continuous-rotation servos. The intake feeds nectar; the separate transfer feeds
 pollen. Both motors run during intake and shooting regardless of which shooter is selected.
@@ -98,6 +100,8 @@ types so encoder velocity control has appropriate SDK motor parameters:
 | Pollen flywheel | Encoder-equipped motor | `flywheelPollen` |
 | Nectar flywheel | Encoder-equipped motor | `flywheelNectar` |
 | Pollen hood | Positional servo | `hoodPollen` |
+| Pollen blocking gate | Positional servo | `gatePollen` |
+| Nectar blocking gate | Positional servo | `gateNectar` |
 | Nectar hood | Positional servo | `hoodNectar` |
 | Intake / nectar feeder | Motor | `intakeMain` |
 | Pollen transfer | Motor | `intakeSmall` |
@@ -109,7 +113,12 @@ types so encoder velocity control has appropriate SDK motor parameters:
 Names live in `config/HardwareNames.java`. Servo ports must be assigned on the Robot Controller;
 source code names do not create a controller hardware configuration.
 
-Set both transfer servos to continuous-rotation mode/type (not positional hood servos).
+Set both transfer servos to continuous-rotation mode/type (not positional hood/gate servos).
+Set `gateClosedPosition` and `gateOpenPosition` separately for `POLLEN` and `NECTAR` in
+ShooterConfig. The supplied 0.0/0.5 positions are examples: use Test Hardware to find the
+blocking and clear positions before INIT, which commands both gates closed. Saved shot
+calibration does not override these positions. In Turret Tuner, the selected gate opens
+only when its stationary/RPM check permits feeding; Stop always commands both gates closed.
 In `RobotConstants.java`, adjust `INTAKE_DIRECTION` and `POLLEN_TRANSFER_DIRECTION` so positive
 power feeds toward the shooters. `TRANSFER_LEFT_SERVO_DIRECTION` sets the left servo direction;
 the right is always the opposite. Tune `INTAKE_POWER`, `POLLEN_TRANSFER_POWER`, and

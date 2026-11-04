@@ -7,9 +7,9 @@ public final class ShooterConfig {
     // TODO: Replace these EXAMPLE measurements for EACH shooter before shooting.
     // not measurements of our robot. k starts at 1; measure it separately for each ball.
     public static final ShooterConfig POLLEN = new ShooterConfig(
-            HardwareNames.FLYWHEEL_P, HardwareNames.HOOD_P);
+            HardwareNames.FLYWHEEL_P, HardwareNames.HOOD_P, HardwareNames.GATE_P);
     public static final ShooterConfig NECTAR = new ShooterConfig(
-            HardwareNames.FLYWHEEL_N, HardwareNames.HOOD_N);
+            HardwareNames.FLYWHEEL_N, HardwareNames.HOOD_N, HardwareNames.GATE_N);
 
     static {
         // Replace/add measurements here independently for each shooter.
@@ -20,6 +20,11 @@ public final class ShooterConfig {
 
     public final String flywheelName;
     public final String hoodName;
+    public final String gateName;
+    // EXAMPLE servo positions (0-1). Calibrate independently for pollen and nectar.
+    // Closed blocks balls; open rotates the blocker clear of the ball path.
+    public double gateClosedPosition = 0.0;
+    public double gateOpenPosition = 0.5;
     public DcMotorSimple.Direction motorDirection = DcMotorSimple.Direction.FORWARD;
     // Fixed hive coordinates belong in FieldConfig; this class describes the hardware.
     public double launchHeight = 0.5;
@@ -40,14 +45,17 @@ public final class ShooterConfig {
     public double servoAtMinAngle = 0.2;
     public double servoAtMaxAngle = 0.8;
 
-    public ShooterConfig(String flywheelName, String hoodName) {
+    public ShooterConfig(String flywheelName, String hoodName, String gateName) {
         this.flywheelName = flywheelName;
         this.hoodName = hoodName;
+        this.gateName = gateName;
     }
 
     /** Each OpMode gets its own settings; tuning must not mutate the shared defaults. */
     public ShooterConfig copy() {
-        ShooterConfig copy = new ShooterConfig(flywheelName, hoodName);
+        ShooterConfig copy = new ShooterConfig(flywheelName, hoodName, gateName);
+        copy.gateClosedPosition = gateClosedPosition;
+        copy.gateOpenPosition = gateOpenPosition;
         copy.motorDirection = motorDirection;
         copy.launchHeight = launchHeight;
         copy.forwardOffset = forwardOffset;

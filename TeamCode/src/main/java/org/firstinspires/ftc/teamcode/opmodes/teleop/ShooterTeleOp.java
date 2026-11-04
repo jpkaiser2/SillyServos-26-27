@@ -109,6 +109,9 @@ public class ShooterTeleOp extends OpMode {
         // Intake and shooting run BOTH feed paths. Reverse takes priority.
         // A rejected shot cannot feed by itself; LB still allows ordinary intake.
         boolean feed = gamepad2.left_bumper || (shoot && shot != null);
+        // Both feed paths run, but only the selected shooter's gate releases balls.
+        pollen.setGateOpen(selectPollen && shoot && shot != null);
+        nectar.setGateOpen(!selectPollen && shoot && shot != null);
         intakeTransfer.setPower(reverse ? -1 : feed ? 1 : 0);
 
         double forward = Range.clip(-gamepad1.left_stick_y,
@@ -135,6 +138,8 @@ public class ShooterTeleOp extends OpMode {
         telemetry.addData("Robot-to-hive distance (m)", "%.2f", Math.hypot(
                 hive.xInches - pose.x(), hive.yInches - pose.y()) * FieldConfig.METERS_PER_INCH);
         telemetry.addData("Intake / transfer", reverse ? "Reverse" : feed ? "Forward" : "Stopped");
+        telemetry.addData("Pollen / nectar gates", "%s / %s",
+                pollen.isGateOpen() ? "Open" : "Closed", nectar.isGateOpen() ? "Open" : "Closed");
         telemetry.addData("Pose (in, in, deg)", "%.1f, %.1f, %.1f",
                 pose.x(), pose.y(), Math.toDegrees(pose.heading()));
         telemetry.addData("Pollen RPM commanded / measured", "%.0f / %.0f",

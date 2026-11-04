@@ -9,18 +9,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 import org.firstinspires.ftc.teamcode.config.FieldConfig;
 
-/** One flywheel and adjustable hood. Horizontal aiming is done by the chassis. */
+/** One flywheel, adjustable hood, and ball-blocking gate. The chassis aims horizontally. */
 public final class Turret {
     private final DcMotorEx flywheel;
     private final Servo hood;
+    private final Servo gate;
     private final ShooterConfig config;
     private ShooterMath.Shot shot;
     private double commandedRpm;
+    private boolean gateOpen;
 
     public Turret(HardwareMap hardwareMap, ShooterConfig config) {
         this.config = config;
+        if (!validServoPosition(config.gateClosedPosition) || !validServoPosition(config.gateOpenPosition)) {
+            throw new IllegalArgumentException("Gate positions must be between 0 and 1: " + config.gateName);
+        }
         flywheel = hardwareMap.get(DcMotorEx.class, config.flywheelName);
         hood = hardwareMap.get(Servo.class, config.hoodName);
+        gate = hardwareMap.get(Servo.class, config.gateName);
         flywheel.setDirection(config.motorDirection);
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -67,12 +73,27 @@ public final class Turret {
         return commandedRpm;
     }
 
+    /** Only release balls on an explicit shoot request while the flywheel is commanded to spin. */
+    public void setGateOpen(boolean open) {
+        gateOpen = open && commandedRpm > 0;
+        gate.setPosition(gateOpen ? config.gateOpenPosition : config.gateClosedPosition);
+    }
+
+    public boolean isGateOpen() {
+        return gateOpen;
+    }
+
+    private static boolean validServoPosition(double position) {
+        return Double.isFinite(position) && position >= 0 && position <= 1;
+    }
+
     public double getMeasuredRpm() {
         return ShooterMath.wheelRpm(flywheel.getVelocity(), config);
     }
 
     public void stop() {
         commandedRpm = 0;
+        setGateOpen(false);
         flywheel.setVelocity(0);
         flywheel.setPower(0);
     }

@@ -190,6 +190,7 @@ public final class TurretTuningTeleOp extends OpMode {
         else if (Double.isNaN(readySince)) readySince = now;
         boolean ready = settled && now - readySince >= 0.5;
         boolean feeding = ready && trigger;
+        s.turret.setGateOpen(feeding);
         feed.setPower(reverse ? -1 : feeding ? 1 : 0);
         if (feeding && !triggerSampled) {
             triggerSampled = true;
@@ -343,6 +344,7 @@ public final class TurretTuningTeleOp extends OpMode {
         telemetry.addData("Hood position / requested RPM", "%.3f / %.0f", hood, rpm);
         telemetry.addData("Commanded / measured RPM", "%.0f / %.0f", s.turret.getCommandedRpm(), measuredRpm);
         telemetry.addData("Feed", ready ? "READY: RT feeds both paths" : "Waiting: hold RB, stationary, RPM settled");
+        telemetry.addData("Selected gate", s.turret.isGateOpen() ? "Open" : "Closed");
         telemetry.addData("Pose (local in, in, deg)", "%.1f, %.1f, %.1f", pose.x(), pose.y(), Math.toDegrees(pose.heading()));
         if (s.verify && shot == null) telemetry.addLine("No valid calculated shot: check distance, height, geometry and RPM limit.");
         if (s.verify && shot != null) telemetry.addData("Launch angle / aim error (deg)", "%.2f / %.2f",

@@ -18,6 +18,8 @@ public final class HardwareNames {
     public static final String FLYWHEEL_P = "flywheelPollen";
     public static final String HOOD_N = "hoodNectar";
     public static final String HOOD_P = "hoodPollen";
+    public static final String GATE_N = "gateNectar";
+    public static final String GATE_P = "gatePollen";
     public static final String PINPOINT = "pinpoint"; // Odometry
 
 }

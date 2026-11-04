@@ -33,11 +33,11 @@ An **OpMode** is a program selected on the Driver Station. This project provides
 
 **Pedro and Pinpoint track position.** The Pinpoint uses odometry wheels and its heading sensor to estimate the robot's **pose**: X, Y, and which direction it faces. At Play, Shooter TeleOp sets this pose to the selected starting position. From then on, movement updates the pose.
 
-**Each shooter has its own calculation and hardware.** Two instances of `Turret` each control one flywheel motor and one servo hood. Despite the class name, there is no separate horizontal turret motor: the **whole robot turns to aim**. The hood sets the vertical launch angle.
+**Each shooter has its own calculation and hardware.** Two instances of `Turret` each control one flywheel motor, one servo hood, and one positional servo gate that blocks balls until shooting. Despite the class name, there is no separate horizontal turret motor: the **whole robot turns to aim**. The hood sets the vertical launch angle.
 
 Every loop, `ShooterMath` uses the robot pose, the shooter's mounting offset, and the fixed hive coordinates to calculate distance, launch angle, flywheel RPM, and heading error. When spin-up is held, the selected hood moves and the flywheel uses encoder velocity control to reach the requested speed. The other flywheel stops.
 
-**Both feed paths run together.** The intake also feeds nectar. Pollen has a separate transfer motor and two continuous-rotation servos commanded in opposite directions. Intake and shooting commands run both paths; reverse reverses both paths and stops the flywheels.
+**Both feed paths run together.** The intake also feeds nectar. Pollen has a separate transfer motor and two continuous-rotation servos commanded in opposite directions. Intake and shooting commands run both paths; reverse reverses both paths and stops the flywheels. Each shooter has its own blocking gate: only the selected shooter opens its gate on a valid shoot command. Both gates stay closed during intake-only operation and spin-up, and close on reverse or Stop.
 
 The shot calculation assumes a stationary robot. Shooter TeleOp has no camera-based position correction, automatic ball detection, or automatic wait for aim/RPM before feeding. Turret Tuner adds a stationary/RPM check for its calibration shots. Stop moving and let the hood and flywheel settle before shooting.
 
@@ -84,12 +84,12 @@ If the selected start or either hive aim point for its alliance is unmeasured, t
 | **G1 right stick left/right** | Turn counterclockwise/clockwise. |
 | **Hold G1 LB** | Stop translation and automatically turn toward the selected shooter's hive. Overrides the sticks while held. |
 | **G2 A / B** | Select pollen / nectar. Changing selection stops the previous flywheel. |
-| **Hold G2 RB** | Move the selected hood and spin up the selected flywheel, without feeding. |
+| **Hold G2 RB** | Move the selected hood and spin up the selected flywheel. Both gates stay closed unless RT is also held. |
 | **Hold G2 LB** | Run intake, pollen transfer, and both transfer servos. Does not itself spin a flywheel. |
-| **Hold G2 RT** | Spin the selected flywheel and feed through both paths when the shot calculation is valid. Activates above 10% trigger travel. |
+| **Hold G2 RT** | Spin the selected flywheel, open its gate, and feed through both paths when the shot calculation is valid. The other gate stays closed. Activates above 10% trigger travel. |
 | **Hold G2 X** | Reverse both feed paths and transfer servos; stop both flywheels. Takes priority over the other G2 feed/spin controls. |
-| **Release G2 LB, RB, RT, and X** | Stop feed commands and flywheel commands. The hood holds its last commanded position. |
-| **Driver Station Stop** | Stop drivetrain, flywheel, feed-motor, and transfer-servo commands. Flywheels may coast down. |
+| **Release G2 LB, RB, RT, and X** | Stop feed commands and flywheel commands, and close both gates. The hood holds its last commanded position. |
+| **Driver Station Stop** | Stop drivetrain, flywheel, feed-motor, and transfer-servo commands; close both gates. Flywheels may coast down. |
 
 In Shooter TeleOp's field-centric mode, pushing the left stick forward commands **+X**, and pushing it left commands **+Y** in Pedro's field diagram. These directions do not flip with alliance. Template TeleOp uses the robot's orientation at Play as its local zero heading. Set `FIELD_CENTRIC_TELEOP = false` in [RobotConstants][robot-constants] for translation relative to the robot instead.
 
@@ -106,6 +106,7 @@ Use these exact names in the active Robot Controller hardware configuration. Nam
 | Odometry computer | `pinpoint` | goBILDA Pinpoint, with forward and lateral odometry pods |
 | Pollen / nectar flywheel | `flywheelPollen` / `flywheelNectar` | Motors with working encoders |
 | Pollen / nectar hood | `hoodPollen` / `hoodNectar` | Positional servos |
+| Pollen / nectar blocking gate | `gatePollen` / `gateNectar` | Positional servos |
 | Intake and nectar feeder | `intakeMain` | Motor |
 | Pollen transfer | `intakeSmall` | Motor |
 | Left / right pollen transfer | `pollenTransferLeft` / `pollenTransferRight` | Continuous-rotation servos |
@@ -212,6 +213,20 @@ Multiply inches by **0.0254** to get meters. Deploy after changing these source 
 
 For your practice target, measure its aim point's **vertical height above the ball's exit point**. Enter that difference in the tuner, in **inches**, separately for each shooter. The default 24 inches is just a starting value. Use a target at least **6 inches above** the exit point, preferably higher: a target level with the launcher cannot determine both angle and speed correction from these observations.
 
+**Set the blocking gates before running either shooter OpMode.** Configure `gatePollen` and `gateNectar` as positional servos. Use **Test Hardware** (Driver Station Settings → Utility OpModes) with no balls loaded to find a position that blocks the ball path and one that rotates fully clear. Select the gate with G1 D-pad, choose the displayed position with the left stick Y, and press RB to apply it, staying within the linkage's free travel.
+
+Set these independently in ShooterConfig's `static` block and redeploy:
+
+```java
+// EXAMPLES ONLY: replace with the positions found on the robot.
+POLLEN.gateClosedPosition = 0.0;
+POLLEN.gateOpenPosition = 0.5;
+NECTAR.gateClosedPosition = 0.0;
+NECTAR.gateOpenPosition = 0.5;
+```
+
+Positions range from 0 to 1; open may be numerically lower than closed. Both gates are commanded closed at INIT. Gate positions always come from ShooterConfig, are not inferred from shots, and are not overridden by saved calibration. Existing saved shot profiles remain usable when gate positions change. The shoot command opens the gate and runs the feeders together; there is no separate gate-opening delay.
+
 ### 2. Set up Turret Tuner
 
 1. Mark the floor directly below the practice target's aim point. This can be a temporary target; it does not have to be an alliance hive.
@@ -234,7 +249,7 @@ Only height and basic shooter geometry are measured by hand; Pedro tracks all su
 | **G2 D-pad up/down** | Change that value. Hold to repeat. Steps: servo 0.005, RPM 50, height 0.5 inch, k 1%. |
 | **Hold G2 LB** | Apply the hood position without spinning. **This is not intake in the tuner.** |
 | **Hold G2 RB** | Apply the hood and spin the selected flywheel. |
-| **Hold G2 RB + RT** | Feed through both paths once stationary and RPM has settled. RT alone does not spin or feed. |
+| **Hold G2 RB + RT** | Open the selected gate and feed through both paths once stationary and RPM has settled. The other gate stays closed. RT alone does not spin or feed. |
 | **Hold G2 X** | Stop flywheels and reverse both feed paths. |
 | **G2 Y**, after releasing RT | Accept the last fed shot **only if it hit the aim point**. |
 | **G2 Back** | Undo one accepted observation and return to Manual. At zero observations, starts Manual tuning. Saved data remains intact. |
@@ -330,7 +345,7 @@ Most robot work belongs under `TeamCode/src/main/java/org/firstinspires/ftc/team
 | [RobotConstants.java][robot-constants] | Feed directions/powers, manual-drive limits, chassis aim settings, and initial odometry defaults. |
 | [FieldConfig.java][field-config] | Four starting poses and fixed red/blue hive aim points. |
 | [ShooterConfig.java][shooter-config] | Separate pollen/nectar geometry, hood mapping, encoder/gearing data, RPM limits, and k. |
-| [Turret.java][turret] | One flywheel and hood; instantiated once per ball type. |
+| [Turret.java][turret] | One flywheel, hood, and blocking gate; instantiated once per ball type. |
 | [ShooterMath.java][shooter-math] | Shot geometry, projectile equations, and unit/speed conversions. |
 | [IntakeTransfer.java][intake-transfer] | Both feed motors and the paired transfer servos. |
 | [pedroPathing/Constants.java][pedro-constants] | Active Pedro drivetrain, localizer, and optional Foresight configurations. |
