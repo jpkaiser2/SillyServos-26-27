@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.config;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-/** Measurements are meters/radians, except the explicitly named RPM and encoder fields. */
+// Measurements are meters/radians, except the explicitly named RPM and encoder fields.
 public final class ShooterConfig {
     // TODO: Replace these EXAMPLE measurements for EACH shooter before shooting.
     // not measurements of our robot. k starts at 1; measure it separately for each ball.
@@ -51,7 +51,7 @@ public final class ShooterConfig {
         this.gateName = gateName;
     }
 
-    /** Each OpMode gets its own settings; tuning must not mutate the shared defaults. */
+    // Each OpMode gets its own settings; tuning must not mutate the shared defaults.
     public ShooterConfig copy() {
         ShooterConfig copy = new ShooterConfig(flywheelName, hoodName, gateName);
         copy.gateClosedPosition = gateClosedPosition;

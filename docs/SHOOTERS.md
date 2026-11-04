@@ -55,14 +55,15 @@ distance, heading error, and both commanded and encoder-measured wheel RPM.
 
 ## Field coordinates and starting positions
 
-Enter the measurements in `config/FieldConfig.java`. They are currently `UNMEASURED`;
-the TeleOp shows which values are missing and refuses to start until the selected start
-and its alliance's two aim points are filled in. The other alliance can be measured later.
+Enter robot start measurements in `config/FieldConfig.java`; these remain `UNMEASURED`.
+Nominal hive aim points are already configured from BIOBUZZ TU07 for the match-start
+upward-facing cells. TeleOp refuses to start until the selected start and its alliance's
+targets are valid. See [hive coordinates and derivation](FIELD_COORDINATES.md).
 
 Use the [official Pedro coordinate frame](https://pedropathing.com/docs/pathing/reference/coordinates)
 for **every start and hive**, with directions viewed as in Pedro's field diagram:
 
-- Origin `(0, 0)` is the **bottom-left corner**; field center is `(72, 72)` inches.
+- Origin `(0, 0)` is the **bottom-left corner**; BIOBUZZ field center is `(70.75, 70.75)` inches.
 - `+X` points **right** and `+Y` points **up** in the diagram.
 - X/Y coordinates and hive heights in `FieldConfig` are **inches**. Heights are above the floor.
 - Start headings are entered in **degrees**: 0 faces +X, 90 faces +Y, 180 faces -X,
@@ -70,9 +71,10 @@ for **every start and hive**, with directions viewed as in Pedro's field diagram
 
 `StartPosition` contains independent `(x, y, heading)` measurements for all four starts,
 measured at the **odometry reference point**, with left/right named from that alliance's
-view into the field. `Alliance.RED` and `Alliance.BLUE` contain fixed pollen and nectar hive
-aim points as `(x, y, height)` in inches. If pollen and nectar aim at the same location, enter the same
-coordinates for both. Measure the intended scoring point, not just the hive's outside edge.
+view into the field. `Alliance.RED` and `Alliance.BLUE` contain fixed hive aim points as
+`(x, y, height)` in inches: red `(58.00, 54.98, 59.55)`, blue `(83.50, 86.52, 59.55)`.
+Pollen and nectar share the same opening-center target for their alliance. These are nominal
+dimensions to verify on your field; targets do not move automatically when a hive tips.
 
 At Play, the selected X/Y are passed directly to Pedro, the heading is converted from degrees
 to radians, and odometry is initialized once. No origin shift or alliance rotation is applied.
@@ -80,6 +82,14 @@ During the match, odometry tracks the robot in this field
 frame and each shooter recalculates its distance and aim from that pose to its alliance's
 fixed hive. Changing starts never moves, mirrors, or offsets the hive coordinates. Both red
 starts use the same red targets, and both blue starts use the same blue targets.
+
+For **Shooting Auto**, each alliance also defines one `ShootingPosition(x, y)` in inches:
+the robot's reference point when it fires, separate from the hive's aim point. Both red
+starts drive to the red shooting position; both blue starts drive to the blue position.
+Auto calculates headings and fires pollen then nectar while holding that same X/Y.
+These new shooting positions are not required by Shooter TeleOp or Turret Tuner.
+See the [autonomous walkthrough](../README.md#shooting-auto-four-starts-two-shooting-positions)
+for route setup, readiness checks, gate delay, timed feeding, and timeouts.
 
 The shooter equations convert both robot and hive positions to meters while preserving this
 origin and axis orientation. Shooter hardware measurements in `ShooterConfig` remain in meters.

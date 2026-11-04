@@ -79,9 +79,7 @@ public class SensorHuskyLens extends LinearOpMode {
          */
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
 
-        /*
-         * Immediately expire so that the first time through we'll do the read.
-         */
+        // Immediately expire so that the first time through we'll do the read.
         rateLimit.expire();
 
         /*

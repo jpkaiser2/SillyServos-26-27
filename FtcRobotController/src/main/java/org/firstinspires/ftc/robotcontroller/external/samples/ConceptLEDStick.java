@@ -102,9 +102,7 @@ public class ConceptLEDStick extends OpMode {
             ledStick.setColor(Color.GREEN);
         }
 
-        /*
-         * Use DPAD up and down to change brightness
-         */
+        // Use DPAD up and down to change brightness
         int newBrightness = brightness;
         if (gamepad1.dpad_up && !wasUp) {
             newBrightness = brightness + 1;

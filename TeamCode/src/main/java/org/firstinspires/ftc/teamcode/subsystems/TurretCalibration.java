@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-/** Fits the existing projectile model to successful shots. All distances are meters. */
+// Fits the existing projectile model to successful shots. All distances are meters.
 public final class TurretCalibration {
     private static final double GRAVITY = 9.81;
 

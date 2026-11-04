@@ -75,14 +75,10 @@ public class ConceptAprilTag extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
-    /**
-     * The variable to store our instance of the AprilTag processor.
-     */
+    // The variable to store our instance of the AprilTag processor.
     private AprilTagProcessor aprilTag;
 
-    /**
-     * The variable to store our instance of the vision portal.
-     */
+    // The variable to store our instance of the vision portal.
     private VisionPortal visionPortal;
 
     // To find the VID/PID for a camera:
@@ -143,9 +139,7 @@ public class ConceptAprilTag extends LinearOpMode {
 
     }   // end method runOpMode()
 
-    /**
-     * Initialize the AprilTag processor.
-     */
+    // Initialize the AprilTag processor.
     private void initAprilTag() {
 
         // Create the AprilTag processor.
@@ -212,9 +206,7 @@ public class ConceptAprilTag extends LinearOpMode {
     }   // end method initAprilTag()
 
 
-    /**
-     * Add telemetry about AprilTag detections.
-     */
+    // Add telemetry about AprilTag detections.
     private void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();

@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterMath;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.TurretCalibration;
 
-/** Guided, stationary-shot calibration in a local Pedro frame. No FieldConfig starts required. */
+// Guided, stationary-shot calibration in a local Pedro frame. No FieldConfig starts required.
 @TeleOp(name = "Turret Tuner", group = "Silly Servos")
 public final class TurretTuningTeleOp extends OpMode {
     private static final double INCH = FieldConfig.METERS_PER_INCH;

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.config.HardwareNames;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
 
-/** Runs the nectar intake/feeder and pollen transfer together. */
+// Runs the nectar intake/feeder and pollen transfer together.
 public final class IntakeTransfer {
     private final DcMotor intake;
     private final DcMotor pollenTransfer;
@@ -35,7 +35,7 @@ public final class IntakeTransfer {
         stop();
     }
 
-    /** Positive runs intake/feed, negative reverses both, and zero stops everything. */
+    // Positive runs intake/feed, negative reverses both, and zero stops everything.
     public void setPower(double power) {
         power = Range.clip(power, -1, 1);
         double transferPower = power * RobotConstants.POLLEN_TRANSFER_POWER;

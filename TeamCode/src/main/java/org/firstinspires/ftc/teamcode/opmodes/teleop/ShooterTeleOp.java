@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterMath;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
-/** TemplateTeleOp drive controls plus independent pollen/nectar shooter control. */
+// TemplateTeleOp drive controls plus independent pollen/nectar shooter control.
 @TeleOp(name = "Shooter TeleOp", group = "Silly Servos")
 public class ShooterTeleOp extends OpMode {
     private PedroMecanumDrive drive;

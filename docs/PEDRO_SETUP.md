@@ -52,7 +52,7 @@ also uses `com.pedropathing.controllers.Controller`, `com.pedropathing.math.Matr
 
 ## Manual drive versus paths
 
-The existing TeleOps and timed TemplateAuto use `Constants.createManual()`, so they can run
+The Pedro TeleOps and timed TemplateAuto use `Constants.createManual()`, so they can run
 with the drivetrain/localizer configured, before Foresight tuning. The wrapper uses Pedro 3's
 `manual()`, `ManualDrive.fieldCentric()`, and `setPose()` APIs. Its input convention stays
 forward positive, strafe left positive, and counterclockwise turn positive.
@@ -60,16 +60,23 @@ TemplateTeleOp sets a local `(0, 0, 0)` pose at Play, so previous Pinpoint runs 
 change its field-centric controls. Its pose is relative to that starting position;
 ShooterTeleOp instead uses the measured field start selected during initialization.
 
-For future autonomous paths or position holding, use `Constants.create(hardwareMap)` after
+ShootingAuto uses `Constants.create(hardwareMap)` for paths and position holding after
 filling in `foresightConfig`. It deliberately reports an error if that configuration is
 missing. A manual-only follower has no path/hold algorithm and should not be used for those
 operations or algorithm debug logging. TemplateAuto remains a timed driving example.
+SimpleTeleOp uses standard mecanum motor mixing and does not require Pedro or Pinpoint.
+
+ShootingAuto selects one of four starts, follows a straight path to that alliance's single
+shooting position, and holds there while firing pollen then nectar. Configure the two
+`ShootingPosition` entries in FieldConfig and the timings in AutonomousConfig; follow the
+[autonomous walkthrough](../README.md#shooting-auto-four-starts-two-shooting-positions).
 
 ## Shooter setup still required
 
-Pedro tuning does not supply field start positions, hive coordinates, or shooter calibration.
+Pedro tuning does not supply field start positions or shooter calibration.
 Fill in `FieldConfig` and `ShooterConfig` as described in [SHOOTERS.md](SHOOTERS.md).
-ShooterTeleOp still requires its selected start and alliance hive measurements before Play.
+Nominal BIOBUZZ hive targets are configured for the starting upward-facing cells; verify
+them on your field. ShooterTeleOp still requires its selected start measured before Play.
 The four-start selector and the bottom-left-origin Pedro field coordinates are preserved.
 Turret Tuner instead establishes a local origin beneath a practice target at Play. Once
 Pedro is tuned, it can calibrate the shooters without field start or hive coordinates;

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 import org.firstinspires.ftc.teamcode.config.FieldConfig;
 
-/** Equations from SillyServosShooterMath. Robot pose/config use SI; field targets use inches. */
+// Equations from SillyServosShooterMath. Robot pose/config use SI; field targets use inches.
 public final class ShooterMath {
     private static final double GRAVITY = 9.81;
 
@@ -26,7 +26,7 @@ public final class ShooterMath {
         }
     }
 
-    /** Returns null for an invalid or unreachable shot, including an excessive RPM. */
+    // Returns null for an invalid or unreachable shot, including an excessive RPM.
     public static Shot solve(double robotX, double robotY, double heading, ShooterConfig c,
                              FieldConfig.Target target) {
         if (!validConfig(c) || !target.isMeasured()) return null;
@@ -65,6 +65,23 @@ public final class ShooterMath {
         double wrapped = (angle + Math.PI) % (2 * Math.PI);
         if (wrapped < 0) wrapped += 2 * Math.PI;
         return wrapped - Math.PI;
+    }
+
+    // Chassis heading that points the offset launch point at the target from a fixed robot XY.
+    public static double aimHeading(double robotX, double robotY, ShooterConfig c, FieldConfig.Target target) {
+        double dx = target.xInches * FieldConfig.METERS_PER_INCH - robotX;
+        double dy = target.yInches * FieldConfig.METERS_PER_INCH - robotY;
+        double distance = Math.hypot(dx, dy);
+        // Mount offset expressed along/across the shooter's horizontal firing direction.
+        double along = c.forwardOffset * Math.cos(c.headingOffset) + c.leftOffset * Math.sin(c.headingOffset);
+        double across = -c.forwardOffset * Math.sin(c.headingOffset) + c.leftOffset * Math.cos(c.headingOffset);
+        if (!Double.isFinite(distance) || !Double.isFinite(along) || !Double.isFinite(across)
+                || distance < 1e-6 || Math.abs(across) >= distance
+                || Math.sqrt(distance * distance - across * across) - along <= 1e-6) {
+            return Double.NaN;
+        }
+        // distance*sin(targetBearing - chassisHeading - mountingAngle) = across.
+        return wrapToPi(Math.atan2(dy, dx) - c.headingOffset - Math.asin(across / distance));
     }
 
     public static double motorTicksPerSecond(double wheelRpm, ShooterConfig c) {

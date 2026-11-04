@@ -797,9 +797,9 @@ class ForwardBraking extends TuningOpMode<List<Double>> {
     public double brakingPower = 0.001;
     public double distance;
     public double IDLE_SECONDS = 1;
-    /** Stops the robot if it gets this many inches past the test's ends. */
+    // Stops the robot if it gets this many inches past the test's ends.
     public double OVERRUN = 24;
-    /** Stops the robot if it drifts this many inches across the test's direction. */
+    // Stops the robot if it drifts this many inches across the test's direction.
     public double DRIFT = 48;
 
     private final ElapsedTime timer = new ElapsedTime();
@@ -982,9 +982,9 @@ class StrafeBraking extends TuningOpMode<List<Double>> {
     public double brakingPower = 0.001;
     public double distance;
     public double IDLE_SECONDS = 1;
-    /** Stops the robot if it gets this many inches past the test's ends. */
+    // Stops the robot if it gets this many inches past the test's ends.
     public double OVERRUN = 24;
-    /** Stops the robot if it drifts this many inches across the test's direction. */
+    // Stops the robot if it drifts this many inches across the test's direction.
     public double DRIFT = 48;
 
     private final ElapsedTime timer = new ElapsedTime();

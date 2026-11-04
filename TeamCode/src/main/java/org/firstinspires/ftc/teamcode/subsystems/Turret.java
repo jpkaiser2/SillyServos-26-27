@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.config.ShooterConfig;
 import org.firstinspires.ftc.teamcode.config.FieldConfig;
 
-/** One flywheel, adjustable hood, and ball-blocking gate. The chassis aims horizontally. */
+// One flywheel, adjustable hood, and ball-blocking gate. The chassis aims horizontally.
 public final class Turret {
     private final DcMotorEx flywheel;
     private final Servo hood;
@@ -33,7 +33,7 @@ public final class Turret {
         stop();
     }
 
-    /** Call every loop, even when stopped, so aim follows the current odometry pose. */
+    // Call every loop, even when stopped, so aim follows the current odometry pose.
     public void update(Pose pose, FieldConfig.Target target, boolean spin) {
         // Pedro uses inches; the PDF uses meters. Heading is already in radians.
         shot = ShooterMath.solve(pose.x() * FieldConfig.METERS_PER_INCH,
@@ -51,7 +51,7 @@ public final class Turret {
         return shot;
     }
 
-    /** Direct hood/RPM control for calibration. The operator must explicitly hold its control. */
+    // Direct hood/RPM control for calibration. The operator must explicitly hold its control.
     public boolean tune(double hoodPosition, double wheelRpm) {
         if (!Double.isFinite(hoodPosition) || hoodPosition < 0 || hoodPosition > 1
                 || !Double.isFinite(wheelRpm) || wheelRpm < 0
@@ -73,7 +73,7 @@ public final class Turret {
         return commandedRpm;
     }
 
-    /** Only release balls on an explicit shoot request while the flywheel is commanded to spin. */
+    // Only release balls on an explicit shoot request while the flywheel is commanded to spin.
     public void setGateOpen(boolean open) {
         gateOpen = open && commandedRpm > 0;
         gate.setPosition(gateOpen ? config.gateOpenPosition : config.gateClosedPosition);

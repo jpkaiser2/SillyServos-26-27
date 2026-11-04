@@ -38,9 +38,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-/**
- * This OpMode demonstrates the basics of using multiple vision portals simultaneously
- */
+// This OpMode demonstrates the basics of using multiple vision portals simultaneously
 @TeleOp(name = "Concept: AprilTagMultiPortal", group = "Concept")
 @Disabled
 public class ConceptAprilTagMultiPortal extends LinearOpMode

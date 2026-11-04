@@ -92,7 +92,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 @Disabled
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
-    /* Declare OpMode members. */
+    // Declare OpMode members.
     private DcMotor         leftDrive   = null;
     private DcMotor         rightDrive  = null;
     private IMU             imu         = null;      // Control/Expansion Hub IMU
@@ -419,9 +419,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         telemetry.update();
     }
 
-    /**
-     * read the Robot heading directly from the IMU (in degrees)
-     */
+    // read the Robot heading directly from the IMU (in degrees)
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);

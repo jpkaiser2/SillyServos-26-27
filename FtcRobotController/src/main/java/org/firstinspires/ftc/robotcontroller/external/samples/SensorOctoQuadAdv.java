@@ -187,9 +187,7 @@ class OctoSwerveDrive {
         octoquad.saveParametersToFlash();
     }
 
-    /**
-     * Updates all 4 swerve modules
-     */
+    // Updates all 4 swerve modules
     public void updateModules() {
         // Read full OctoQuad data block and then pass it to each swerve module to update themselves.
         octoquad.readAllEncoderData(encoderDataBlock);

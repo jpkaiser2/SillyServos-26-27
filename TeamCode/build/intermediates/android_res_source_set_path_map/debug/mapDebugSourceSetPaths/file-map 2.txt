@@ -1,9 +1,0 @@
-org.firstinspires.ftc.teamcode.TeamCode-pngs-0 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/build/generated/res/pngs/debug
-org.firstinspires.ftc.teamcode.TeamCode-resValues-1 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/build/generated/res/resValues/debug
-org.firstinspires.ftc.teamcode.TeamCode-updated_navigation_xml-2 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/build/generated/updated_navigation_xml/debug
-org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-3 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/build/intermediates/incremental/debug/mergeDebugResources/merged.dir
-org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-4 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/build/intermediates/incremental/debug/mergeDebugResources/stripped.dir
-org.firstinspires.ftc.teamcode.TeamCode-debug-5 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/build/intermediates/merged_res/debug/mergeDebugResources
-org.firstinspires.ftc.teamcode.TeamCode-debug-6 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/src/debug/res
-org.firstinspires.ftc.teamcode.TeamCode-main-7 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/TeamCode/src/main/res
-gradleHome-0 /Users/Jacobkaiserman/.gradle

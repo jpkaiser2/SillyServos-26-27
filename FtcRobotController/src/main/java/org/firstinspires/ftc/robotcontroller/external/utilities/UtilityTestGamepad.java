@@ -30,10 +30,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Utility;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-/*
- * This OpMode helps test the gamepads so you can make sure they are functional.
- *
- */
+// This OpMode helps test the gamepads so you can make sure they are functional.
 @Utility(name = "Test Gamepad", description = "Test gamepads on your driver station")
 @SuppressWarnings("unused")
 public class UtilityTestGamepad extends OpMode {
@@ -85,9 +82,7 @@ public class UtilityTestGamepad extends OpMode {
         }
     }
 
-    /*
-      This returns a string based off of the buttons pressed, with the xbox names for buttons
-     */
+    // This returns a string based off of the buttons pressed, with the xbox names for buttons
     String xbox_buttons_to_string(Gamepad gamepad){
         String buttons = generic_buttons_to_string(gamepad);
         if (gamepad.back) buttons += "back" + SEPARATOR;
@@ -101,9 +96,7 @@ public class UtilityTestGamepad extends OpMode {
         return buttons;
     }
 
-    /*
-      This returns a string based off of the buttons pressed, with the ps names for buttons
-     */
+    // This returns a string based off of the buttons pressed, with the ps names for buttons
     String ps_buttons_to_string(Gamepad gamepad){
         String buttons = generic_buttons_to_string(gamepad);
         if (gamepad.cross) buttons += "cross" + SEPARATOR;
@@ -118,9 +111,7 @@ public class UtilityTestGamepad extends OpMode {
         return buttons;
     }
 
-    /*
-      This returns the buttons pressed for those that are the same on both types of gamepads
-     */
+    // This returns the buttons pressed for those that are the same on both types of gamepads
     String generic_buttons_to_string(Gamepad gamepad){
         String buttons = "";
         if (gamepad.dpad_up) buttons += "dpad_up" + SEPARATOR;

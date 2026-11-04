@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-/** Robot-local calibration. Source geometry stays authoritative; only fitted values are overridden. */
+// Robot-local calibration. Source geometry stays authoritative; only fitted values are overridden.
 public final class ShooterCalibrationStore {
     public static final String FILE_NAME = "SillyServosShooterCalibration.json";
 
@@ -74,7 +74,7 @@ public final class ShooterCalibrationStore {
         write(root);
     }
 
-    /** Only removes the selected shooter's entry. The other calibration is preserved. */
+    // Only removes the selected shooter's entry. The other calibration is preserved.
     public static void remove(ShooterConfig config) throws IOException, JSONException {
         JSONObject root = read();
         root.remove(config.flywheelName);

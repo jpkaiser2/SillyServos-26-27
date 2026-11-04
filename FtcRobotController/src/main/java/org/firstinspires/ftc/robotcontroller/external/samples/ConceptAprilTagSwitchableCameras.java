@@ -55,21 +55,15 @@ import java.util.List;
 @Disabled
 public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
 
-    /*
-     * Variables used for switching cameras.
-     */
+    // Variables used for switching cameras.
     private WebcamName webcam1, webcam2;
     private boolean oldLeftBumper;
     private boolean oldRightBumper;
 
-    /**
-     * The variable to store our instance of the AprilTag processor.
-     */
+    // The variable to store our instance of the AprilTag processor.
     private AprilTagProcessor aprilTag;
 
-    /**
-     * The variable to store our instance of the vision portal.
-     */
+    // The variable to store our instance of the vision portal.
     private VisionPortal visionPortal;
 
     @Override
@@ -109,9 +103,7 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
 
     }   // end runOpMode()
 
-    /**
-     * Initialize the AprilTag processor.
-     */
+    // Initialize the AprilTag processor.
     private void initAprilTag() {
 
         // Create the AprilTag processor by using a builder.
@@ -130,9 +122,7 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
 
     }   // end method initAprilTag()
 
-    /**
-     * Add telemetry about camera switching.
-     */
+    // Add telemetry about camera switching.
     private void telemetryCameraSwitching() {
 
         if (visionPortal.getActiveCamera().equals(webcam1)) {
@@ -145,9 +135,7 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
 
     }   // end method telemetryCameraSwitching()
 
-    /**
-     * Add telemetry about AprilTag detections.
-     */
+    // Add telemetry about AprilTag detections.
     private void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -184,9 +172,7 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
 
     }   // end method telemetryAprilTag()
 
-    /**
-     * Set the active camera according to input from the gamepad.
-     */
+    // Set the active camera according to input from the gamepad.
     private void doCameraSwitching() {
         if (visionPortal.getCameraState() == CameraState.STREAMING) {
             // If the left bumper is pressed, use Webcam 1.

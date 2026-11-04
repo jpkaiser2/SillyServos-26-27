@@ -81,9 +81,7 @@ public class SensorOctoQuad extends LinearOpMode {
     private int         velRight;
     private int         velPerp;
 
-    /**
-     * This function is executed when this OpMode is selected from the Driver Station.
-     */
+    // This function is executed when this OpMode is selected from the Driver Station.
     @Override
     public void runOpMode() {
 

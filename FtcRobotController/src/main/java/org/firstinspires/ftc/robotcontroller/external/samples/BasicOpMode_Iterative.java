@@ -59,9 +59,7 @@ public class BasicOpMode_Iterative extends OpMode
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
+    // Code to run ONCE when the driver hits INIT
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -82,24 +80,18 @@ public class BasicOpMode_Iterative extends OpMode
         telemetry.addData("Status", "Initialized");
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit START
-     */
+    // Code to run REPEATEDLY after the driver hits INIT, but before they hit START
     @Override
     public void init_loop() {
     }
 
-    /*
-     * Code to run ONCE when the driver hits START
-     */
+    // Code to run ONCE when the driver hits START
     @Override
     public void start() {
         runtime.reset();
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits START but before they hit STOP
-     */
+    // Code to run REPEATEDLY after the driver hits START but before they hit STOP
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
@@ -130,9 +122,7 @@ public class BasicOpMode_Iterative extends OpMode
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
+    // Code to run ONCE after the driver hits STOP
     @Override
     public void stop() {
     }

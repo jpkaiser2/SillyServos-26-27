@@ -64,11 +64,11 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 @Disabled
 public class RobotAutoDriveToLine_Linear extends LinearOpMode {
 
-    /* Declare OpMode members. */
+    // Declare OpMode members.
     private DcMotor         leftDrive   = null;
     private DcMotor         rightDrive  = null;
 
-    /** The variable to store a reference to our color sensor hardware object */
+    // The variable to store a reference to our color sensor hardware object
     NormalizedColorSensor colorSensor;
 
     static final double     WHITE_THRESHOLD = 0.5;  // spans between 0.0 - 1.0 from dark to light

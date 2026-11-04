@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.procedures.ForesightTuner;
 import org.firstinspires.ftc.teamcode.pedroPathing.procedures.MecanumTuner;
 import org.firstinspires.ftc.teamcode.pedroPathing.procedures.PinpointTuner;
 
-/** AutoTune discovers these methods and exposes them on the robot's web interface. */
+// AutoTune discovers these methods and exposes them on the robot's web interface.
 public final class Tuning {
     private Tuning() { }
 

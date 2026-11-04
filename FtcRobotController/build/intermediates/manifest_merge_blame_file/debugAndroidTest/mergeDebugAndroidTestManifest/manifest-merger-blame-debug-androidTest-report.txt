@@ -3,24 +3,24 @@
 3    package="com.qualcomm.ftcrobotcontroller.test" >
 4
 5    <uses-sdk
-5-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:5:5-74
+5-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:5:5-74
 6        android:minSdkVersion="24"
-6-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:5:15-41
+6-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:5:15-41
 7        android:targetSdkVersion="28" />
-7-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:5:42-71
+7-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:5:42-71
 8
 9    <instrumentation
-9-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:7:5-11:86
+9-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:7:5-11:86
 10        android:name="androidx.test.runner.AndroidJUnitRunner"
-10-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:7:22-76
+10-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:7:22-76
 11        android:functionalTest="false"
-11-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:10:22-52
+11-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:10:22-52
 12        android:handleProfiling="false"
-12-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:9:22-53
+12-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:9:22-53
 13        android:label="Tests for com.qualcomm.ftcrobotcontroller.test"
-13-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:11:22-84
+13-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:11:22-84
 14        android:targetPackage="com.qualcomm.ftcrobotcontroller.test" />
-14-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest10425754074856402350.xml:8:22-82
+14-->/Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest4084880088324110362.xml:8:22-82
 15
 16    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 16-->[:FtcRobotController] /Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:5-81

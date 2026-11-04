@@ -83,9 +83,7 @@ public class SensorOctoQuadLocalization extends LinearOpMode
     // Data structure which will store the localizer data read from the OctoQuad
     OctoQuad.LocalizerDataBlock localizer = new OctoQuad.LocalizerDataBlock();
 
-    /*
-     * Main OpMode function
-     */
+    // Main OpMode function
     public void runOpMode()
     {
         // Begin by retrieving a handle to the device from the hardware map.
@@ -115,9 +113,7 @@ public class SensorOctoQuadLocalization extends LinearOpMode
         // for that you need to look at the status returned by getLocalizerStatus()
         oq.resetLocalizerAndCalibrateIMU();
 
-        /*
-         * Init Loop
-         */
+        // Init Loop
         while (opModeInInit())
         {
             telemetry.addData("OQ Firmware Version", oq.getFirmwareVersionString());
@@ -133,9 +129,7 @@ public class SensorOctoQuadLocalization extends LinearOpMode
             sleep(100);
         }
 
-        /*
-         * Don't proceed to the main loop until calibration is complete
-         */
+        // Don't proceed to the main loop until calibration is complete
         while (!isStopRequested() && (oq.getLocalizerStatus() != OctoQuad.LocalizerStatus.RUNNING))
         {
             telemetry.addLine("Waiting for IMU Calibration to complete\n");
@@ -152,9 +146,7 @@ public class SensorOctoQuadLocalization extends LinearOpMode
         // on telemetry for debugging
         oq.resetAllPositions();
 
-        /*
-         * MAIN LOOP
-         */
+        // MAIN LOOP
         while (opModeIsActive())
         {
             // Use the Gamepad A/Cross button to teleport to a new location and heading
