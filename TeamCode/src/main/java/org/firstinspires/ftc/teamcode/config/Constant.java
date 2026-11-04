@@ -3,11 +3,8 @@ package org.firstinspires.ftc.teamcode.config;
 
 //Tunable constants shared across subsystems and opmodes.
 
-import com.pedropathing.revhub.drivetrains.MecanumConfig;
-import com.pedropathing.revhub.localizers.PinpointConfig;
-
-public final class Constants {
-  private Constants() {
+public final class Constant {
+  private Constant() {
     }
 
     public static final double MAX_DRIVE_POWER = 1.0;
@@ -17,6 +14,8 @@ public final class Constants {
 
     public static final double AUTO_FORWARD_POWER = 0.35;
     public static final double AUTO_FORWARD_SECONDS = 1.5;
+
+    public static final double TICKS_PER_REVOLUTION_FLYWHEEL = 6000 * 28; // 6000 = rpm, 28 = ticks per rev at base
 
     
 }

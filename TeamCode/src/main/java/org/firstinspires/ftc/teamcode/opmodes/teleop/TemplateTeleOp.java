@@ -14,6 +14,11 @@ public class TemplateTeleOp extends OpMode {
 
     @Override
     public void init() {
+        follower = Constants.create(hardwareMap);
+    }
+
+    @Override
+    public void loop() {
         follower.manual(
                 -gamepad1.left_stick_y,
                 gamepad1.left_stick_x,
@@ -21,10 +26,5 @@ public class TemplateTeleOp extends OpMode {
         );
 
         follower.update();
-    }
-
-    @Override
-    public void loop() {
-
     }
 }

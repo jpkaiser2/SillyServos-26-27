@@ -2,16 +2,11 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.algorithm.ForesightConfig;
-import com.pedropathing.controllers.Controller;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.math.Matrix;
-import com.pedropathing.math.Vector2D;
 import com.pedropathing.revhub.drivetrains.Mecanum;
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
 import com.pedropathing.revhub.localizers.PinpointConfig;
 import com.pedropathing.revhub.localizers.PinpointLocalizer;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
@@ -22,10 +17,12 @@ public class Constants {
   public static ForesightConfig foresightConfig; //= new ForesightConfig();
 
   public static Follower create(HardwareMap h) {
-    return new Follower(
+    Follower follower =  new Follower(
             new PinpointLocalizer(h, localizerConfig),
             new Mecanum(h, drivetrainConfig),
             new Foresight(foresightConfig)
     );
+
+    return follower;
   }
 }
