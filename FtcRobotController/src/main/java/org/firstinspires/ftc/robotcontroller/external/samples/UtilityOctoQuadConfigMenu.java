@@ -564,19 +564,13 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
 
         public static abstract class OptionElement extends Element
         {
-            /**
-             * Override this to get notified when the element is clicked
-             */
+            // Override this to get notified when the element is clicked
             void onClick() {}
 
-            /**
-             * Override this to get notified when the element gets a "left edit" input
-             */
+            // Override this to get notified when the element gets a "left edit" input
             protected void onLeftInput() {}
 
-            /**
-             * Override this to get notified when the element gets a "right edit" input
-             */
+            // Override this to get notified when the element gets a "right edit" input
             protected void onRightInput() {}
         }
 

@@ -153,9 +153,7 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
         }
     }
 
-    /**
-     * Initialize the AprilTag processor.
-     */
+    // Initialize the AprilTag processor.
     private void initAprilTag() {
         // Create the AprilTag processor by using a builder.
         aprilTag = new AprilTagProcessor.Builder().build();

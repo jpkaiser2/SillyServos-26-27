@@ -81,9 +81,7 @@ public class SensorLimelight3A extends LinearOpMode {
 
         limelight.pipelineSwitch(0);
 
-        /*
-         * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
-         */
+        // Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
         limelight.start();
 
         telemetry.addData(">", "Robot Ready.  Press Play.");

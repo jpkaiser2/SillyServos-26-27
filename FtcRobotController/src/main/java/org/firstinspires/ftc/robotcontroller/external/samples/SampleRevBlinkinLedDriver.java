@@ -52,14 +52,10 @@ import java.util.concurrent.TimeUnit;
 @Disabled
 public class SampleRevBlinkinLedDriver extends OpMode {
 
-    /*
-     * Change the pattern every 10 seconds in AUTO mode.
-     */
+    // Change the pattern every 10 seconds in AUTO mode.
     private final static int LED_PERIOD = 10;
 
-    /*
-     * Rate limit gamepad button presses to every 500ms.
-     */
+    // Rate limit gamepad button presses to every 500ms.
     private final static int GAMEPAD_LOCKOUT = 500;
 
     RevBlinkinLedDriver blinkinLedDriver;
@@ -100,9 +96,7 @@ public class SampleRevBlinkinLedDriver extends OpMode {
         if (displayKind == DisplayKind.AUTO) {
             doAutoDisplay();
         } else {
-            /*
-             * MANUAL mode: Nothing to do, setting the pattern as a result of a gamepad event.
-             */
+            // MANUAL mode: Nothing to do, setting the pattern as a result of a gamepad event.
         }
     }
 

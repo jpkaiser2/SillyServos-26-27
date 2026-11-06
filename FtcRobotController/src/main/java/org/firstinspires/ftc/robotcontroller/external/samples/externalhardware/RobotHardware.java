@@ -55,7 +55,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class RobotHardware {
 
-    /* Declare OpMode members. */
+    // Declare OpMode members.
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)

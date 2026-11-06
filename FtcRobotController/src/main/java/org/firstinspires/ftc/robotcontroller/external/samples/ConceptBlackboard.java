@@ -54,9 +54,7 @@ public class ConceptBlackboard extends OpMode {
     public static final String TIMES_STARTED_KEY = "Times started";
     public static final String ALLIANCE_KEY = "Alliance";
 
-    /**
-     * This method will be called once, when the INIT button is pressed.
-     */
+    // This method will be called once, when the INIT button is pressed.
     @Override
     public void init() {
         // This gets us what is in the blackboard or the default if it isn't in there.

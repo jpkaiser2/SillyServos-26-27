@@ -34,18 +34,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/*
- * Demonstrates an empty iterative OpMode
- */
+// Demonstrates an empty iterative OpMode
 @TeleOp(name = "Concept: NullOp", group = "Concept")
 @Disabled
 public class ConceptNullOp extends OpMode {
 
   private ElapsedTime runtime = new ElapsedTime();
 
-  /**
-   * This method will be called once, when the INIT button is pressed.
-   */
+  // This method will be called once, when the INIT button is pressed.
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
@@ -60,9 +56,7 @@ public class ConceptNullOp extends OpMode {
   public void init_loop() {
   }
 
-  /**
-   * This method will be called once, when the START button is pressed.
-   */
+  // This method will be called once, when the START button is pressed.
   @Override
   public void start() {
     runtime.reset();

@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.util.Range;
 @Disabled
 public class RobotTeleopTank_Iterative extends OpMode{
 
-    /* Declare OpMode members. */
+    // Declare OpMode members.
     public DcMotor  leftDrive   = null;
     public DcMotor  rightDrive  = null;
     public DcMotor  leftArm     = null;
@@ -67,9 +67,7 @@ public class RobotTeleopTank_Iterative extends OpMode{
     public static final double ARM_UP_POWER    =  0.50 ;   // Run arm motor up at 50% power
     public static final double ARM_DOWN_POWER  = -0.25 ;   // Run arm motor down at -25% power
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
+    // Code to run ONCE when the driver hits INIT
     @Override
     public void init() {
         // Define and Initialize Motors
@@ -97,23 +95,17 @@ public class RobotTeleopTank_Iterative extends OpMode{
         telemetry.addData(">", "Robot Ready.  Press START.");    //
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit START
-     */
+    // Code to run REPEATEDLY after the driver hits INIT, but before they hit START
     @Override
     public void init_loop() {
     }
 
-    /*
-     * Code to run ONCE when the driver hits START
-     */
+    // Code to run ONCE when the driver hits START
     @Override
     public void start() {
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits START but before they hit STOP
-     */
+    // Code to run REPEATEDLY after the driver hits START but before they hit STOP
     @Override
     public void loop() {
         double left;
@@ -151,9 +143,7 @@ public class RobotTeleopTank_Iterative extends OpMode{
         telemetry.addData("right", "%.2f", right);
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
+    // Code to run ONCE after the driver hits STOP
     @Override
     public void stop() {
     }

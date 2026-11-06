@@ -635,14 +635,14 @@ public class FtcRobotControllerActivity extends Activity
       monitorContainer.setOrientation(LinearLayout.HORIZONTAL);
       for (int i = 0; i < monitorContainer.getChildCount(); i++) {
         View view = monitorContainer.getChildAt(i);
-        view.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1 /* weight */));
+        view.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1)); // weight = 1
       }
     } else {
       // When the phone is portrait, lay out the monitor views vertically.
       monitorContainer.setOrientation(LinearLayout.VERTICAL);
       for (int i = 0; i < monitorContainer.getChildCount(); i++) {
         View view = monitorContainer.getChildAt(i);
-        view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1 /* weight */));
+        view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1)); // weight = 1
       }
     }
     monitorContainer.requestLayout();
