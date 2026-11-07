@@ -30,7 +30,7 @@ An **OpMode** is a program selected on the Driver Station. This project provides
 
 | Program | Purpose | What it needs |
 | --- | --- | --- |
-| **Simple TeleOp** | Standard mecanum driving, manual shooter RPM/hood, intake/transfer, and gates. | Drive motors and all shooter/feed hardware. No Pinpoint, field coordinates, or Pedro tuning required. |
+| **Simple TeleOp** | Standard mecanum driving, manual flywheel power/angle, and intake/transfer. | Four drive motors, one flywheel/angle servo, intake motor, transfer motor, and two CR servos. |
 | **Template TeleOp** | Drive with the sticks and display position. Sets a local `(0, 0, 0)` pose at Play. | Four drive motors and Pinpoint; configured and calibrated for accurate driving. |
 | **Shooter TeleOp** | Drive, aim the chassis, control both shooters, and run intake/transfer. Loads saved turret calibration at INIT. | All hardware below, shooter calibration, and the selected start plus both hive aim points for that alliance. |
 | **Turret Tuner** | Adjust hood/RPM live, record successful shots, calculate calibration, and save it on the robot. | All hardware below, tuned Pedro, basic shooter geometry, and a practice target. No FieldConfig measurements or Foresight needed. |
@@ -105,35 +105,30 @@ In Shooter TeleOp's field-centric mode, pushing the left stick forward commands 
 
 Select **Simple TeleOp** on the Driver Station, press INIT, then Play. This program drives the four motors directly with standard mecanum mixing. Driving is always **robot-centric**: stick forward moves toward the robot's front, regardless of its orientation. No Pinpoint, IMU, starting-position selection, or hive coordinates are used.
 
-It reuses the existing `Turret` and `IntakeTransfer` hardware classes. Flywheels still use encoder velocity control, both feed paths still run together, and only the selected shooter's gate opens for shooting. The driver chooses the hood position and wheel RPM instead of having a trajectory calculation choose them.
+The single flywheel uses direct motor power with no encoder requirement or shooter math. The angle servo uses a manually selected position. The intake motor, transfer motor, and two continuous-rotation transfer servos run together; the transfer servos rotate in opposite directions. No gates, second shooter, or saved calibration are required.
 
 | Control | Action |
 | --- | --- |
 | **G1 left stick** | Drive forward/back and strafe relative to the robot. |
-| **G1 right stick left/right** | Turn counterclockwise/clockwise. Aim the chassis manually. |
-| **G2 A / B** | Select pollen / nectar. The other flywheel stops and its gate closes. |
-| **G2 D-pad up/down** | Increase/decrease selected wheel RPM by 50. Hold to repeat. Limited to 0–`maxWheelRpm`. |
-| **G2 D-pad right/left** | Increase/decrease selected hood servo position by 0.01. Hold to repeat. Moves the hood immediately unless reverse is held, without requiring the flywheel to spin. |
-| **Hold G2 LB** | Run both feed paths and the paired transfer servos. Gates remain closed unless shooting. |
-| **Hold G2 RB** | Apply the selected hood setting and spin its flywheel. Does not open a gate by itself. |
-| **Hold G2 RT** | Spin the selected flywheel, open its gate, and run both feed paths. Requires a valid positive RPM command; activates above 10% trigger travel. |
-| **Hold G2 X** | Reverse both feed paths and stop both flywheels; both gates close. Takes priority over shooting. |
-| **Release G2 LB/RB/RT/X** | Stop feed and flywheel commands; close gates. The hood holds its last position. |
-| **Driver Station Stop** | Stop drive/feed/flywheel commands and close both gates. |
+| **G1 right stick left/right** | Turn counterclockwise/clockwise. |
+| **Hold G2 LB** | Run intake and transfer forward. |
+| **Hold G2 RB** | Spin the flywheel at the selected power. |
+| **Hold G2 RT** | Spin the flywheel and run intake/transfer to shoot. Activates above 10% trigger travel with positive selected power. |
+| **Hold G2 X** | Reverse intake/transfer and stop the flywheel. Takes priority over LB/RB/RT. |
+| **Tap G2 D-pad up/down** | Increase/decrease flywheel power by 0.05, limited to 0–1. |
+| **Tap G2 D-pad right/left** | Increase/decrease angle servo position by 0.01. |
+| **Release G2 LB/RB/RT/X** | Stop intake/transfer and flywheel power. The angle servo holds its position. |
+| **Driver Station Stop** | Stop all motor and transfer servo power. |
 
-G1 LB has no auto-aim function in this OpMode. G2 D-pad changes servo position numerically; depending on the linkage, increasing the position may raise or lower the launch angle.
+Use **RB to spin up, aim manually, then RT to shoot**. RT feeds immediately; it does not wait for the flywheel to reach speed. The flywheel coasts when power stops. LB can run intake/transfer even with flywheel power set to zero.
 
-Each shooter starts with **1500 wheel RPM** (or its configured limit if lower) and a requested hood position midway between its configured endpoints. The hood moves when adjusted or when spin-up/shooting is requested. Pollen and nectar keep their own requested settings while you switch between them; adjustments are not saved after the OpMode ends.
+Flywheel power starts at **0.60**. The angle servo moves to **0.50 at INIT**, with starting travel limits of **0.20–0.80**. Set `ANGLE_MIN`, `ANGLE_MAX`, and `ANGLE_START` in [SimpleTeleOp.java][simple-teleop] to match the actual linkage. Increasing servo position may raise or lower the angle depending on the linkage. Settings last for this run only.
 
-If a saved turret calibration is available, its servo endpoints supply the hood's allowed range. Otherwise the endpoints in `ShooterConfig` are used. Both endpoint orders are supported. Calibration loading is local file reading and does not initialize Pedro or odometry. Geometry-based angle, k, and aim calculations are not used here. Confirm the hood endpoints, gate positions, encoder/gearing values, and RPM limit match the robot before running.
-
-Use **RB to spin up, watch measured RPM, aim manually, then RT to shoot**. As in Shooter TeleOp, RT feeds immediately; it does not wait for the RPM or hood to settle. Setting requested RPM to zero prevents RT from opening a gate or feeding, but LB still permits ordinary intake.
-
-Drive direction settings come from `LEFT_DRIVE_DIRECTION` / `RIGHT_DRIVE_DIRECTION` in `RobotConstants`, and the stick limits use `MAX_DRIVE_POWER` / `MAX_TURN_POWER`. Generated Pedro drivetrain settings and `FIELD_CENTRIC_TELEOP` do not affect Simple TeleOp. The existing Pedro OpModes, turret tuner, and saved calibration format are unchanged.
+This OpMode uses `flywheelPollen` and `hoodPollen` for the single shooter. Change `FLYWHEEL_NAME` and `ANGLE_SERVO_NAME` at the top of `SimpleTeleOp.java` if needed. `FLYWHEEL_DIRECTION` is also set there. Drive and intake/transfer directions and power limits come from `RobotConstants`; the right transfer servo always uses the opposite direction to the left.
 
 ## Hardware and first deployment
 
-Use these exact names in the active Robot Controller hardware configuration. **Simple TeleOp does not require the `pinpoint` device.** Names are case-sensitive. Assign the real ports and motor models; Java names alone do not create the hardware configuration.
+Use these exact names in the active Robot Controller hardware configuration. **Simple TeleOp requires only the four drive motors, `flywheelPollen`, `hoodPollen`, `intakeMain`, `intakeSmall`, and the two transfer CR servos.** Names are case-sensitive. Assign the real ports and motor models; Java names alone do not create the hardware configuration.
 
 | Device | Configuration name | Type |
 | --- | --- | --- |
@@ -147,7 +142,7 @@ Use these exact names in the active Robot Controller hardware configuration. **S
 | Pollen transfer | `intakeSmall` | Motor |
 | Left / right pollen transfer | `pollenTransferLeft` / `pollenTransferRight` | Continuous-rotation servos |
 
-The names are defined in [HardwareNames.java][hardware-names]. Simple TeleOp uses the same motor and servo names as Shooter TeleOp. The Pinpoint forward pod connects to its X input; the lateral pod connects to Y. See the [official Pinpoint setup guide](https://pedropathing.com/docs/pathing/tuning/localization/pinpoint) for mounting and wiring.
+The names are defined in [HardwareNames.java][hardware-names]. Simple TeleOp uses a subset of these names and does not require flywheel encoders; the full list is for the other OpModes. The Pinpoint forward pod connects to its X input; the lateral pod connects to Y. See the [official Pinpoint setup guide](https://pedropathing.com/docs/pathing/tuning/localization/pinpoint) for mounting and wiring.
 
 1. Open this repository's root folder in Android Studio and let **Gradle sync** finish. The dependencies are already installed in the project.
 2. Power and connect the Robot Controller, and make sure the Driver Station connects to it.

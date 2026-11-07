@@ -1,6 +1,0 @@
-com.qualcomm.ftcrobotcontroller.test.FtcRobotController-androidTest-0 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/generated/res/resValues/androidTest/debug
-com.qualcomm.ftcrobotcontroller.test.FtcRobotController-updated_navigation_xml-1 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/generated/updated_navigation_xml/debugAndroidTest
-com.qualcomm.ftcrobotcontroller.test.FtcRobotController-mergeDebugAndroidTestResources-2 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
-com.qualcomm.ftcrobotcontroller.test.FtcRobotController-mergeDebugAndroidTestResources-3 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
-com.qualcomm.ftcrobotcontroller.test.FtcRobotController-debugAndroidTest-4 /Users/Jacobkaiserman/Desktop/SillyServos-26-27/FtcRobotController/build/intermediates/merged_res/debugAndroidTest/mergeDebugAndroidTestResources
-gradleHome-0 /Users/Jacobkaiserman/.gradle
